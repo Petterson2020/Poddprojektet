@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Models
 {
-    internal class Podd
+    public class Kategori
     {
     }
 }
