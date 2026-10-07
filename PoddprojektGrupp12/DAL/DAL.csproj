@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="3.12.0" />
+    <PackageReference Include="System.ServiceModel.Syndication" Version="10.0.12" />
   </ItemGroup>
 
   <ItemGroup>
