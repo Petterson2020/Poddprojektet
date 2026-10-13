@@ -191,6 +191,43 @@ namespace PL
             {
                 MessageBox.Show("Kunde inte hämta podden: " + ex.Message);
             }
+            
+        }
+
+        private async void button6_Click(object sender, EventArgs e) // Ditt metodnamn kan heta något annat beroende på knappen
+        {
+            // 1. Kontrollera att användaren faktiskt har markerat något i listan (listBox3)
+            if (listBox3.SelectedIndex == -1)
+            {
+                MessageBox.Show("Du måste markera en kategori i listan för att kunna ta bort den.");
+                return;
+            }
+
+            // 2. Hämta namnet på den markerade kategorin
+            string valdKategori = listBox3.SelectedItem.ToString();
+
+            // 3. Fråga användaren om de är säkra (bra praxis när man raderar saker)
+            DialogResult dialogResult = MessageBox.Show(
+                $"Är du säker på att du vill ta bort kategorin '{valdKategori}'?",
+                "Bekräfta borttagning",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                try
+                {
+                    // 4. Anropa kontrollern för att ta bort kategorin (se steg 2 nedan om du får rött streck här)
+                    await _categoryController.DeleteCategoryAsync(valdKategori);
+
+                    // 5. Uppdatera listorna i gränssnittet så att kategorin försvinner direkt
+                    UpdateCategoryLists();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Kunde inte ta bort kategorin: " + ex.Message);
+                }
+            }
         }
     }
 }

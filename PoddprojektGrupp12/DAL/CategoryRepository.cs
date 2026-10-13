@@ -35,9 +35,10 @@ namespace DAL
             await _categories.ReplaceOneAsync(c => c.Id == category.Id, category);
         }
 
-        public async Task DeleteAsync(string id)
+        // UPPDATERAD: Nu raderar vi baserat på Name istället för Id
+        public async Task DeleteAsync(string categoryName)
         {
-            await _categories.DeleteOneAsync(c => c.Id == id);
+            await _categories.DeleteOneAsync(c => c.Name == categoryName);
         }
     }
 }
