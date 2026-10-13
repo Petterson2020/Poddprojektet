@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml;
 using System.ServiceModel.Syndication;
+using System.Net.Http; // MÅSTE LÄGGAS TILL FÖR HTTPCLIENT
 using DAL;
 using Models;
 
@@ -24,7 +25,6 @@ namespace BL
                 throw new ArgumentException("URL får inte vara tomt!");
             }
 
-            // Skapa grundobjektet och initiera listan för avsnitt
             Podcast newPodcast = new Podcast
             {
                 Id = Guid.NewGuid().ToString(),
@@ -35,33 +35,35 @@ namespace BL
 
             try
             {
-                // Ladda ner och läs RSS-flödet från internet
-                using (XmlReader reader = XmlReader.Create(url))
+                // NYTT: Använder HttpClient för att skicka med en User-Agent
+                using (var client = new HttpClient())
                 {
-                    SyndicationFeed feed = SyndicationFeed.Load(reader);
+                    client.DefaultRequestHeaders.Add("User-Agent", "PoddProjektet/1.0 (Windows NT 10.0; Win64; x64)");
 
-                    // Hämta den riktiga titeln från podden (istället för att sätta URL som titel)
-                    newPodcast.Title = feed.Title?.Text ?? "Okänd titel";
-
-                    // Loopa igenom alla avsnitt i flödet och lägg till dem
-                    foreach (SyndicationItem item in feed.Items)
+                    using (var responseStream = await client.GetStreamAsync(url))
+                    using (var reader = XmlReader.Create(responseStream))
                     {
-                        Episode newEpisode = new Episode
+                        SyndicationFeed feed = SyndicationFeed.Load(reader);
+
+                        newPodcast.Title = feed.Title?.Text ?? "Okänd titel";
+
+                        foreach (SyndicationItem item in feed.Items)
                         {
-                            Title = item.Title?.Text ?? "Okänt avsnitt",
-                            Description = item.Summary?.Text ?? "Ingen beskrivning tillgänglig."
-                        };
-                        newPodcast.Episodes.Add(newEpisode);
+                            Episode newEpisode = new Episode
+                            {
+                                Title = item.Title?.Text ?? "Okänt avsnitt",
+                                Description = item.Summary?.Text ?? "Ingen beskrivning tillgänglig."
+                            };
+                            newPodcast.Episodes.Add(newEpisode);
+                        }
                     }
                 }
             }
             catch (Exception ex)
             {
-                // Kastar ett fel till PL om nedladdningen misslyckas (t.ex. ogiltig länk)
                 throw new Exception("Kunde inte läsa RSS-flödet. Kontrollera att länken är korrekt.", ex);
             }
 
-            // Spara den kompletta podden med alla avsnitt i databasen via DAL
             await _podcastRepository.CreateAsync(newPodcast);
         }
 
