@@ -97,5 +97,66 @@ namespace PL
         private void textBox1_TextChanged(object sender, EventArgs e) { }
         private void label2_Click(object sender, EventArgs e) { }
         private void label3_Click(object sender, EventArgs e) { }
+
+       
+        
+            private async void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedIndex != -1)
+            {
+                try
+                {
+                    string selectedTitle = listBox1.SelectedItem.ToString();
+                    var allPodcasts = await _podcastController.GetAllPodcastsAsync();
+
+                    var selectedPodcast = System.Linq.Enumerable.FirstOrDefault(allPodcasts, p => p.Title == selectedTitle);
+
+                    listBox2.Items.Clear();
+                    textBox3.Clear(); // Tömmer beskrivningen (dubbelkolla att din ruta heter textBox3)
+
+                    if (selectedPodcast != null && selectedPodcast.Episodes != null)
+                    {
+                        foreach (var episode in selectedPodcast.Episodes)
+                        {
+                            listBox2.Items.Add(episode.Title);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Kunde inte ladda avsnitt: " + ex.Message);
+                }
+            }
+        }
+
+      
+        
+            private async void listBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox2.SelectedIndex != -1 && listBox1.SelectedIndex != -1)
+            {
+                try
+                {
+                    string selectedPodcastTitle = listBox1.SelectedItem.ToString();
+                    string selectedEpisodeTitle = listBox2.SelectedItem.ToString();
+
+                    var allPodcasts = await _podcastController.GetAllPodcastsAsync();
+                    var selectedPodcast = System.Linq.Enumerable.FirstOrDefault(allPodcasts, p => p.Title == selectedPodcastTitle);
+
+                    if (selectedPodcast != null)
+                    {
+                        var selectedEpisode = System.Linq.Enumerable.FirstOrDefault(selectedPodcast.Episodes, ep => ep.Title == selectedEpisodeTitle);
+                        if (selectedEpisode != null)
+                        {
+                            textBox3.Text = selectedEpisode.Description; // Dubbelkolla att din ruta heter textBox3
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Kunde inte ladda beskrivningen: " + ex.Message);
+                }
+            }
+        }
     }
-}
+    }

@@ -104,6 +104,7 @@
             listBox1.Name = "listBox1";
             listBox1.Size = new Size(467, 404);
             listBox1.TabIndex = 5;
+            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
             // button1
             // 
@@ -193,6 +194,7 @@
             listBox2.Name = "listBox2";
             listBox2.Size = new Size(363, 104);
             listBox2.TabIndex = 0;
+            listBox2.SelectedIndexChanged += listBox2_SelectedIndexChanged;
             // 
             // groupBox2
             // 
