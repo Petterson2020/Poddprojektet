@@ -65,11 +65,9 @@
             PoddHanteraren.Controls.Add(label2);
             PoddHanteraren.Controls.Add(label1);
             PoddHanteraren.Controls.Add(textBox1);
-            PoddHanteraren.Location = new Point(15, 28);
-            PoddHanteraren.Margin = new Padding(4);
+            PoddHanteraren.Location = new Point(12, 22);
             PoddHanteraren.Name = "PoddHanteraren";
-            PoddHanteraren.Padding = new Padding(4);
-            PoddHanteraren.Size = new Size(609, 759);
+            PoddHanteraren.Size = new Size(487, 607);
             PoddHanteraren.TabIndex = 0;
             PoddHanteraren.TabStop = false;
             PoddHanteraren.Text = "Hantera Poddar";
@@ -79,9 +77,10 @@
             // 
             button7.BackColor = SystemColors.ControlLight;
             button7.FlatStyle = FlatStyle.Flat;
-            button7.Location = new Point(475, 65);
+            button7.Location = new Point(380, 52);
+            button7.Margin = new Padding(2);
             button7.Name = "button7";
-            button7.Size = new Size(118, 37);
+            button7.Size = new Size(94, 30);
             button7.TabIndex = 8;
             button7.Text = "Hämta";
             button7.UseVisualStyleBackColor = false;
@@ -93,10 +92,9 @@
             button3.FlatAppearance.MouseDownBackColor = Color.Navy;
             button3.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button3.FlatStyle = FlatStyle.Flat;
-            button3.Location = new Point(339, 698);
-            button3.Margin = new Padding(4);
+            button3.Location = new Point(271, 558);
             button3.Name = "button3";
-            button3.Size = new Size(118, 36);
+            button3.Size = new Size(94, 29);
             button3.TabIndex = 7;
             button3.Text = "Ändra";
             button3.UseVisualStyleBackColor = false;
@@ -107,10 +105,9 @@
             button2.FlatAppearance.MouseDownBackColor = Color.Navy;
             button2.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(475, 698);
-            button2.Margin = new Padding(4);
+            button2.Location = new Point(380, 558);
             button2.Name = "button2";
-            button2.Size = new Size(118, 36);
+            button2.Size = new Size(94, 29);
             button2.TabIndex = 6;
             button2.Text = "Ta Bort";
             button2.UseVisualStyleBackColor = false;
@@ -118,10 +115,9 @@
             // listBox1
             // 
             listBox1.FormattingEnabled = true;
-            listBox1.Location = new Point(18, 165);
-            listBox1.Margin = new Padding(4);
+            listBox1.Location = new Point(14, 132);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(583, 504);
+            listBox1.Size = new Size(467, 404);
             listBox1.TabIndex = 5;
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
@@ -131,10 +127,9 @@
             button1.FlatAppearance.MouseDownBackColor = Color.Navy;
             button1.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(475, 121);
-            button1.Margin = new Padding(4);
+            button1.Location = new Point(380, 97);
             button1.Name = "button1";
-            button1.Size = new Size(117, 36);
+            button1.Size = new Size(94, 29);
             button1.TabIndex = 4;
             button1.Text = "Spara";
             button1.UseVisualStyleBackColor = false;
@@ -143,19 +138,17 @@
             // comboBox1
             // 
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(136, 121);
-            comboBox1.Margin = new Padding(4);
+            comboBox1.Location = new Point(109, 97);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(332, 33);
+            comboBox1.Size = new Size(266, 28);
             comboBox1.TabIndex = 3;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(9, 125);
-            label2.Margin = new Padding(4, 0, 4, 0);
+            label2.Location = new Point(7, 100);
             label2.Name = "label2";
-            label2.Size = new Size(97, 25);
+            label2.Size = new Size(82, 20);
             label2.TabIndex = 2;
             label2.Text = "Kategorier:";
             label2.Click += label2_Click;
@@ -163,20 +156,18 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(9, 76);
-            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Location = new Point(7, 61);
             label1.Name = "label1";
-            label1.Size = new Size(47, 25);
+            label1.Size = new Size(38, 20);
             label1.TabIndex = 1;
             label1.Text = "URL:";
             label1.Click += label1_Click;
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(136, 68);
-            textBox1.Margin = new Padding(4);
+            textBox1.Location = new Point(109, 54);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(332, 31);
+            textBox1.Size = new Size(266, 27);
             textBox1.TabIndex = 0;
             textBox1.TextChanged += textBox1_TextChanged;
             // 
@@ -185,32 +176,29 @@
             groupBox1.Controls.Add(textBox2);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(listBox2);
-            groupBox1.Location = new Point(655, 29);
-            groupBox1.Margin = new Padding(4);
+            groupBox1.Location = new Point(524, 23);
             groupBox1.Name = "groupBox1";
-            groupBox1.Padding = new Padding(4);
-            groupBox1.Size = new Size(472, 368);
+            groupBox1.Size = new Size(378, 294);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Avsnitt";
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(11, 212);
-            textBox2.Margin = new Padding(4);
+            textBox2.Location = new Point(9, 170);
             textBox2.Multiline = true;
             textBox2.Name = "textBox2";
             textBox2.ReadOnly = true;
-            textBox2.Size = new Size(453, 134);
+            textBox2.Size = new Size(363, 108);
             textBox2.TabIndex = 2;
+            textBox2.TextChanged += listBox2_SelectedIndexChanged;
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(11, 184);
-            label3.Margin = new Padding(4, 0, 4, 0);
+            label3.Location = new Point(9, 147);
             label3.Name = "label3";
-            label3.Size = new Size(106, 25);
+            label3.Size = new Size(87, 20);
             label3.TabIndex = 1;
             label3.Text = "Beskrivning:";
             label3.Click += label3_Click;
@@ -218,10 +206,9 @@
             // listBox2
             // 
             listBox2.FormattingEnabled = true;
-            listBox2.Location = new Point(11, 42);
-            listBox2.Margin = new Padding(4);
+            listBox2.Location = new Point(9, 34);
             listBox2.Name = "listBox2";
-            listBox2.Size = new Size(453, 129);
+            listBox2.Size = new Size(363, 104);
             listBox2.TabIndex = 0;
             listBox2.SelectedIndexChanged += listBox2_SelectedIndexChanged;
             // 
@@ -233,11 +220,9 @@
             groupBox2.Controls.Add(button4);
             groupBox2.Controls.Add(textBox3);
             groupBox2.Controls.Add(label4);
-            groupBox2.Location = new Point(659, 414);
-            groupBox2.Margin = new Padding(4);
+            groupBox2.Location = new Point(527, 331);
             groupBox2.Name = "groupBox2";
-            groupBox2.Padding = new Padding(4);
-            groupBox2.Size = new Size(469, 372);
+            groupBox2.Size = new Size(375, 298);
             groupBox2.TabIndex = 2;
             groupBox2.TabStop = false;
             groupBox2.Text = "Kategorier";
@@ -248,10 +233,9 @@
             button6.FlatAppearance.MouseDownBackColor = Color.Navy;
             button6.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button6.FlatStyle = FlatStyle.Flat;
-            button6.Location = new Point(336, 311);
-            button6.Margin = new Padding(4);
+            button6.Location = new Point(269, 249);
             button6.Name = "button6";
-            button6.Size = new Size(118, 36);
+            button6.Size = new Size(94, 29);
             button6.TabIndex = 9;
             button6.Text = "Ta Bort";
             button6.UseVisualStyleBackColor = false;
@@ -262,10 +246,9 @@
             button5.FlatAppearance.MouseDownBackColor = Color.Navy;
             button5.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(200, 311);
-            button5.Margin = new Padding(4);
+            button5.Location = new Point(160, 249);
             button5.Name = "button5";
-            button5.Size = new Size(118, 36);
+            button5.Size = new Size(94, 29);
             button5.TabIndex = 8;
             button5.Text = "Ändra";
             button5.UseVisualStyleBackColor = false;
@@ -273,10 +256,9 @@
             // listBox3
             // 
             listBox3.FormattingEnabled = true;
-            listBox3.Location = new Point(22, 81);
-            listBox3.Margin = new Padding(4);
+            listBox3.Location = new Point(18, 65);
             listBox3.Name = "listBox3";
-            listBox3.Size = new Size(430, 204);
+            listBox3.Size = new Size(345, 164);
             listBox3.TabIndex = 3;
             // 
             // button4
@@ -285,10 +267,9 @@
             button4.FlatAppearance.MouseDownBackColor = Color.Navy;
             button4.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button4.FlatStyle = FlatStyle.Flat;
-            button4.Location = new Point(336, 38);
-            button4.Margin = new Padding(4);
+            button4.Location = new Point(269, 30);
             button4.Name = "button4";
-            button4.Size = new Size(118, 36);
+            button4.Size = new Size(94, 29);
             button4.TabIndex = 2;
             button4.Text = "Spara";
             button4.UseVisualStyleBackColor = false;
@@ -296,31 +277,28 @@
             // 
             // textBox3
             // 
-            textBox3.Location = new Point(95, 38);
-            textBox3.Margin = new Padding(4);
+            textBox3.Location = new Point(76, 30);
             textBox3.Name = "textBox3";
-            textBox3.Size = new Size(233, 31);
+            textBox3.Size = new Size(187, 27);
             textBox3.TabIndex = 1;
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(8, 41);
-            label4.Margin = new Padding(4, 0, 4, 0);
+            label4.Location = new Point(6, 33);
             label4.Name = "label4";
-            label4.Size = new Size(64, 25);
+            label4.Size = new Size(52, 20);
             label4.TabIndex = 0;
             label4.Text = "Namn:";
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1142, 801);
+            ClientSize = new Size(914, 641);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Controls.Add(PoddHanteraren);
-            Margin = new Padding(4);
             Name = "Form1";
             Text = "Poddhanteraren";
             Load += Form1_Load;

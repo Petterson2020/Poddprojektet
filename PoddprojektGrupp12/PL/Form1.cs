@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Text.RegularExpressions; // För att tvätta bort HTML-taggar
 using BL;
 using Models;
 
@@ -9,6 +11,9 @@ namespace PL
     {
         private readonly IPodcastController _podcastController;
         private readonly ICategoryController _categoryController;
+
+        // Vårt arbetsminne för att komma ihåg avsnitten som visas just nu
+        private List<Episode> _currentEpisodes = new List<Episode>();
 
         public Form1()
         {
@@ -48,8 +53,7 @@ namespace PL
         // Koden för att Spara Kategori
         private async void btnSaveCategory_Click(object sender, EventArgs e)
         {
-            // textBox2 är antagligen din inmatningsruta för Kategorier
-            if (string.IsNullOrWhiteSpace(textBox2.Text))
+            if (string.IsNullOrWhiteSpace(textBox3.Text))
             {
                 MessageBox.Show("Du måste skriva ett namn på kategorin.");
                 return;
@@ -57,8 +61,8 @@ namespace PL
 
             try
             {
-                await _categoryController.CreateCategoryAsync(textBox2.Text);
-                textBox2.Clear();
+                await _categoryController.CreateCategoryAsync(textBox3.Text);
+                textBox3.Clear();
                 UpdateCategoryLists();
             }
             catch (Exception ex)
@@ -70,7 +74,6 @@ namespace PL
         // Koden för att Spara Podd
         private async void btnSavePodcast_Click(object sender, EventArgs e)
         {
-            // textBox1 är din URL-ruta och comboBox1 är din rullgardinsmeny
             if (string.IsNullOrWhiteSpace(textBox1.Text) || comboBox1.SelectedIndex == -1)
             {
                 MessageBox.Show("Vänligen ange en URL och välj en kategori.");
@@ -83,7 +86,7 @@ namespace PL
                 await _podcastController.AddPodcastAsync(textBox1.Text, selectedCategory);
                 MessageBox.Show("Podden har lagts till!");
                 textBox1.Clear();
-                // Uppdatera listbox1 (Poddlistan) här senare
+                // Uppdatera listbox1 (Poddlistan) här senare när vi hämtar databasen
             }
             catch (Exception ex)
             {
@@ -97,9 +100,9 @@ namespace PL
         private void textBox1_TextChanged(object sender, EventArgs e) { }
         private void label2_Click(object sender, EventArgs e) { }
         private void label3_Click(object sender, EventArgs e) { }
+        private void textBox2_TextChanged(object sender, EventArgs e) { }
 
-
-
+        // När man klickar på en podd i listan
         private async void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBox1.SelectedIndex != -1)
@@ -112,11 +115,13 @@ namespace PL
                     var selectedPodcast = System.Linq.Enumerable.FirstOrDefault(allPodcasts, p => p.Title == selectedTitle);
 
                     listBox2.Items.Clear();
-                    textBox3.Clear(); // Tömmer beskrivningen (dubbelkolla att din ruta heter textBox3)
+                    textBox2.Clear();
 
                     if (selectedPodcast != null && selectedPodcast.Episodes != null)
                     {
-                        foreach (var episode in selectedPodcast.Episodes)
+                        _currentEpisodes = selectedPodcast.Episodes;
+
+                        foreach (var episode in _currentEpisodes)
                         {
                             listBox2.Items.Add(episode.Title);
                         }
@@ -129,28 +134,23 @@ namespace PL
             }
         }
 
-
-
-        private async void listBox2_SelectedIndexChanged(object sender, EventArgs e)
+        // När man klickar på ett avsnitt
+        private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listBox2.SelectedIndex != -1 && listBox1.SelectedIndex != -1)
+            if (listBox2.SelectedIndex != -1 && _currentEpisodes != null)
             {
                 try
                 {
-                    string selectedPodcastTitle = listBox1.SelectedItem.ToString();
-                    string selectedEpisodeTitle = listBox2.SelectedItem.ToString();
+                    var selectedEpisode = _currentEpisodes[listBox2.SelectedIndex];
 
-                    var allPodcasts = await _podcastController.GetAllPodcastsAsync();
-                    var selectedPodcast = System.Linq.Enumerable.FirstOrDefault(allPodcasts, p => p.Title == selectedPodcastTitle);
+                    // 1. Tvättar bort HTML-taggar (som <div> och <p>)
+                    string cleanDescription = Regex.Replace(selectedEpisode.Description, "<.*?>", string.Empty);
 
-                    if (selectedPodcast != null)
-                    {
-                        var selectedEpisode = System.Linq.Enumerable.FirstOrDefault(selectedPodcast.Episodes, ep => ep.Title == selectedEpisodeTitle);
-                        if (selectedEpisode != null)
-                        {
-                            textBox3.Text = selectedEpisode.Description; // Dubbelkolla att din ruta heter textBox3
-                        }
-                    }
+                    // 2. Översätter HTML-koder (som &amp; till & och &nbsp; till mellanslag)
+                    cleanDescription = System.Net.WebUtility.HtmlDecode(cleanDescription);
+
+                    // 3. Visar den rena texten i beskrivningsrutan
+                    textBox2.Text = cleanDescription;
                 }
                 catch (Exception ex)
                 {
@@ -159,10 +159,38 @@ namespace PL
             }
         }
 
-            private async void btnHamta_Click(object sender, EventArgs e)
+        // Hämta-knappen
+        private async void btnHamta_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Visar: " + textBox1.Text);
+            string url = textBox1.Text;
+
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                MessageBox.Show("Du måste skriva in en länk först!");
+                return;
+            }
+
+            try
+            {
+                var podcastPreview = await _podcastController.GetPodcastPreviewAsync(url);
+
+                listBox2.Items.Clear();
+                textBox2.Clear();
+
+                if (podcastPreview.Episodes != null)
+                {
+                    _currentEpisodes = podcastPreview.Episodes;
+
+                    foreach (var episode in _currentEpisodes)
+                    {
+                        listBox2.Items.Add(episode.Title);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Kunde inte hämta podden: " + ex.Message);
+            }
         }
     }
-    
 }

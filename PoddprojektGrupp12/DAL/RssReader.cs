@@ -9,26 +9,28 @@ namespace DAL
 {
     public class RssReader : IRssReader
     {
-        // Fix 1: Lade till '>' efter Podcast
         public async Task<Podcast> GetPodcastAsync(string url, string categoryName)
         {
             Podcast newPodcast = new Podcast
             {
-                Url = url,
+                Url = url, // Id tilldelas oftast när man sparar i databasen, men du kan lägga till Guid.NewGuid().ToString() här om du vill.
                 Category = categoryName,
                 Episodes = new List<Episode>()
             };
 
             using (HttpClient client = new HttpClient())
             {
-                // Fix 2: Hämtar dataströmmen från nätet först
+                // DENNA RAD ÄR NY: Den förklär ditt program till en vanlig webbläsare
+                client.DefaultRequestHeaders.Add("User-Agent", "PoddProjektet/1.0 (Windows NT 10.0; Win64; x64)");
+
                 using (var stream = await client.GetStreamAsync(url))
                 {
-                    // Skickar in strömmen (stream) till XmlReader
                     using (XmlReader reader = XmlReader.Create(stream, new XmlReaderSettings { Async = true }))
                     {
                         SyndicationFeed feed = SyndicationFeed.Load(reader);
-                        newPodcast.Title = feed.Title.Text;
+
+                        // Säkrare hämtning av titel
+                        newPodcast.Title = feed.Title?.Text ?? "Okänd titel";
 
                         foreach (SyndicationItem item in feed.Items)
                         {
@@ -44,9 +46,7 @@ namespace DAL
                 }
             }
 
-            // Fix 3: Rättstavat return innan metoden stängs
             return newPodcast;
         }
     }
 }
-// Fix 4: Tog bort den extra klammern här

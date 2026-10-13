@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Xml;
-using System.ServiceModel.Syndication;
-using System.Net.Http; // MÅSTE LÄGGAS TILL FÖR HTTPCLIENT
 using DAL;
 using Models;
 
@@ -12,10 +9,12 @@ namespace BL
     public class PodcastController : IPodcastController
     {
         private readonly IPodcastRepository _podcastRepository;
+        private readonly IRssReader _rssReader;
 
         public PodcastController()
         {
             _podcastRepository = new PodcastRepository();
+            _rssReader = new RssReader();
         }
 
         public async Task AddPodcastAsync(string url, string categoryName)
@@ -25,51 +24,31 @@ namespace BL
                 throw new ArgumentException("URL får inte vara tomt!");
             }
 
-            Podcast newPodcast = new Podcast
-            {
-                Id = Guid.NewGuid().ToString(),
-                Url = url,
-                Category = categoryName,
-                Episodes = new List<Episode>()
-            };
+            // 1. Låter din RssReader i DAL hämta podden och alla avsnitt från nätet
+            Podcast newPodcast = await _rssReader.GetPodcastAsync(url, categoryName);
 
-            try
-            {
-                // NYTT: Använder HttpClient för att skicka med en User-Agent
-                using (var client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Add("User-Agent", "PoddProjektet/1.0 (Windows NT 10.0; Win64; x64)");
+            // 2. Sätter ett unikt ID för databasen
+            newPodcast.Id = Guid.NewGuid().ToString();
 
-                    using (var responseStream = await client.GetStreamAsync(url))
-                    using (var reader = XmlReader.Create(responseStream))
-                    {
-                        SyndicationFeed feed = SyndicationFeed.Load(reader);
-
-                        newPodcast.Title = feed.Title?.Text ?? "Okänd titel";
-
-                        foreach (SyndicationItem item in feed.Items)
-                        {
-                            Episode newEpisode = new Episode
-                            {
-                                Title = item.Title?.Text ?? "Okänt avsnitt",
-                                Description = item.Summary?.Text ?? "Ingen beskrivning tillgänglig."
-                            };
-                            newPodcast.Episodes.Add(newEpisode);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Kunde inte läsa RSS-flödet. Kontrollera att länken är korrekt.", ex);
-            }
-
+            // 3. Sparar den kompletta podden i databasen via Repository
             await _podcastRepository.CreateAsync(newPodcast);
         }
 
         public async Task<List<Podcast>> GetAllPodcastsAsync()
         {
             return await _podcastRepository.GetAllAsync();
+        }
+
+        // NY METOD: Används av "Hämta"-knappen för att förhandsgranska utan att spara
+        public async Task<Podcast> GetPodcastPreviewAsync(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                throw new ArgumentException("URL får inte vara tomt!");
+            }
+
+            // Använder RssReader för att bara hämta ner datan (utan att spara i databasen)
+            return await _rssReader.GetPodcastAsync(url, "Förhandsgranskning");
         }
     }
 }
