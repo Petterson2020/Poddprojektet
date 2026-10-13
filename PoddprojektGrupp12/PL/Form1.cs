@@ -98,9 +98,9 @@ namespace PL
         private void label2_Click(object sender, EventArgs e) { }
         private void label3_Click(object sender, EventArgs e) { }
 
-       
-        
-            private async void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+
+
+        private async void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBox1.SelectedIndex != -1)
             {
@@ -129,9 +129,9 @@ namespace PL
             }
         }
 
-      
-        
-            private async void listBox2_SelectedIndexChanged(object sender, EventArgs e)
+
+
+        private async void listBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBox2.SelectedIndex != -1 && listBox1.SelectedIndex != -1)
             {
@@ -158,5 +158,11 @@ namespace PL
                 }
             }
         }
+
+            private async void btnHamta_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Visar: " + textBox1.Text);
+        }
     }
-    }
+    
+}
