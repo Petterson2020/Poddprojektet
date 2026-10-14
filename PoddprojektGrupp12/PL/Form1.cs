@@ -44,10 +44,33 @@ namespace PL
             }
         }
 
+        // NY METOD: Uppdaterar den stora poddlistan (listBox1)
+        private async void UpdatePodcastList()
+        {
+            try
+            {
+                listBox1.Items.Clear();
+                var podcasts = await _podcastController.GetAllPodcastsAsync();
+
+                if (podcasts != null)
+                {
+                    foreach (var podcast in podcasts)
+                    {
+                        listBox1.Items.Add(podcast.Title);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Kunde inte ladda poddar: " + ex.Message);
+            }
+        }
+
         // Ladda in listorna direkt när programmet startar
         private void Form1_Load(object sender, EventArgs e)
         {
             UpdateCategoryLists();
+            UpdatePodcastList(); // NY RAD: Laddar in dina sparade poddar direkt!
         }
 
         // Koden för att Spara Kategori
@@ -86,7 +109,9 @@ namespace PL
                 await _podcastController.AddPodcastAsync(textBox1.Text, selectedCategory);
                 MessageBox.Show("Podden har lagts till!");
                 textBox1.Clear();
-                // Uppdatera listbox1 (Poddlistan) här senare när vi hämtar databasen
+
+                // NY RAD: Uppdaterar listan direkt så den nya podden dyker upp!
+                UpdatePodcastList();
             }
             catch (Exception ex)
             {
@@ -194,19 +219,16 @@ namespace PL
 
         }
 
-        private async void button6_Click(object sender, EventArgs e) // Ditt metodnamn kan heta något annat beroende på knappen
+        private async void button6_Click(object sender, EventArgs e)
         {
-            // 1. Kontrollera att användaren faktiskt har markerat något i listan (listBox3)
             if (listBox3.SelectedIndex == -1)
             {
                 MessageBox.Show("Du måste markera en kategori i listan för att kunna ta bort den.");
                 return;
             }
 
-            // 2. Hämta namnet på den markerade kategorin
             string valdKategori = listBox3.SelectedItem.ToString();
 
-            // 3. Fråga användaren om de är säkra (bra praxis när man raderar saker)
             DialogResult dialogResult = MessageBox.Show(
                 $"Är du säker på att du vill ta bort kategorin '{valdKategori}'?",
                 "Bekräfta borttagning",
@@ -217,10 +239,7 @@ namespace PL
             {
                 try
                 {
-                    // 4. Anropa kontrollern för att ta bort kategorin (se steg 2 nedan om du får rött streck här)
                     await _categoryController.DeleteCategoryAsync(valdKategori);
-
-                    // 5. Uppdatera listorna i gränssnittet så att kategorin försvinner direkt
                     UpdateCategoryLists();
                 }
                 catch (Exception ex)
@@ -243,7 +262,6 @@ namespace PL
                 return;
             }
 
-            // 2. Kolla så att användaren har skrivit ett nytt namn i rutan
             string oldName = listBox3.SelectedItem.ToString();
             string newName = textBox3.Text;
 
@@ -255,16 +273,51 @@ namespace PL
 
             try
             {
-                // 3. Säg åt logiklagret att ändra namnet
                 await _categoryController.UpdateCategoryAsync(oldName, newName);
-
-                // 4. Rensa textrutan och uppdatera listan så det nya namnet syns
                 textBox3.Clear();
                 UpdateCategoryLists();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Kunde inte ändra kategorin: " + ex.Message);
+            }
+        }
+
+        // HÄR ÄR DEN NYA METODEN FÖR FILTRERING
+        private async void listBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox3.SelectedIndex != -1)
+            {
+                string valdKategori = listBox3.SelectedItem.ToString();
+
+                // Fyller i namnet i textrutan så det är redo om användaren vill trycka "Ändra"
+                textBox3.Text = valdKategori;
+
+                try
+                {
+                    // Hämta alla poddar
+                    var allPodcasts = await _podcastController.GetAllPodcastsAsync();
+
+                    // Rensa den stora poddlistan till vänster
+                    listBox1.Items.Clear();
+
+                    // Lägg BARA till de poddar som matchar den valda kategorin
+                    if (allPodcasts != null)
+                    {
+                        foreach (var podcast in allPodcasts)
+                        {
+                            // Om din databasmodell använder ett annat namn än "Category" (t.ex. CategoryName), ändra det här.
+                            if (podcast.Category == valdKategori)
+                            {
+                                listBox1.Items.Add(podcast.Title);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Kunde inte filtrera poddar: " + ex.Message);
+                }
             }
         }
     }

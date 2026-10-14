@@ -30,7 +30,7 @@
         {
             PoddHanteraren = new GroupBox();
             button7 = new Button();
-            button3 = new Button();
+            button5 = new Button();
             button2 = new Button();
             listBox1 = new ListBox();
             button1 = new Button();
@@ -38,13 +38,13 @@
             label2 = new Label();
             label1 = new Label();
             textBox1 = new TextBox();
+            button3 = new Button();
             groupBox1 = new GroupBox();
             textBox2 = new TextBox();
             label3 = new Label();
             listBox2 = new ListBox();
             groupBox2 = new GroupBox();
             button6 = new Button();
-            button5 = new Button();
             listBox3 = new ListBox();
             button4 = new Button();
             textBox3 = new TextBox();
@@ -86,19 +86,19 @@
             button7.UseVisualStyleBackColor = false;
             button7.Click += btnHamta_Click;
             // 
-            // button3
+            // button5
             // 
-            button3.BackColor = SystemColors.ControlLight;
-            button3.FlatAppearance.MouseDownBackColor = Color.Navy;
-            button3.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
-            button3.FlatStyle = FlatStyle.Flat;
-            button3.Location = new Point(154, 249);
-            button3.Name = "button3";
-            button3.Size = new Size(94, 29);
-            button3.TabIndex = 7;
-            button3.Text = "Ändra";
-            button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
+            button5.BackColor = SystemColors.ControlLight;
+            button5.FlatAppearance.MouseDownBackColor = Color.Navy;
+            button5.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
+            button5.FlatStyle = FlatStyle.Flat;
+            button5.Location = new Point(261, 558);
+            button5.Name = "button5";
+            button5.Size = new Size(94, 29);
+            button5.TabIndex = 8;
+            button5.Text = "Ändra";
+            button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
             // 
             // button2
             // 
@@ -172,6 +172,20 @@
             textBox1.TabIndex = 0;
             textBox1.TextChanged += textBox1_TextChanged;
             // 
+            // button3
+            // 
+            button3.BackColor = SystemColors.ControlLight;
+            button3.FlatAppearance.MouseDownBackColor = Color.Navy;
+            button3.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
+            button3.FlatStyle = FlatStyle.Flat;
+            button3.Location = new Point(154, 249);
+            button3.Name = "button3";
+            button3.Size = new Size(94, 29);
+            button3.TabIndex = 7;
+            button3.Text = "Ändra";
+            button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
+            // 
             // groupBox1
             // 
             groupBox1.Controls.Add(textBox2);
@@ -242,20 +256,6 @@
             button6.UseVisualStyleBackColor = false;
             button6.Click += button6_Click;
             // 
-            // button5
-            // 
-            button5.BackColor = SystemColors.ControlLight;
-            button5.FlatAppearance.MouseDownBackColor = Color.Navy;
-            button5.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
-            button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(261, 558);
-            button5.Name = "button5";
-            button5.Size = new Size(94, 29);
-            button5.TabIndex = 8;
-            button5.Text = "Ändra";
-            button5.UseVisualStyleBackColor = false;
-            button5.Click += button5_Click;
-            // 
             // listBox3
             // 
             listBox3.FormattingEnabled = true;
@@ -263,6 +263,7 @@
             listBox3.Name = "listBox3";
             listBox3.Size = new Size(345, 164);
             listBox3.TabIndex = 3;
+            listBox3.SelectedIndexChanged += listBox3_SelectedIndexChanged;
             // 
             // button4
             // 
