@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Models;
 
@@ -10,6 +9,6 @@ namespace DAL
         Task CreateAsync(Podcast podcast);
         Task<List<Podcast>> GetAllAsync();
         Task UpdateAsync(Podcast podcast);
-        Task DeleteAsync(string id);
+        Task DeleteAsync(string title); // Rätt namn och rätt variabel!
     }
 }

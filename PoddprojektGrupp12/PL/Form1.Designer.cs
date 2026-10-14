@@ -67,7 +67,7 @@
             PoddHanteraren.Controls.Add(textBox1);
             PoddHanteraren.Location = new Point(12, 22);
             PoddHanteraren.Name = "PoddHanteraren";
-            PoddHanteraren.Size = new Size(487, 607);
+            PoddHanteraren.Size = new Size(487, 675);
             PoddHanteraren.TabIndex = 0;
             PoddHanteraren.TabStop = false;
             PoddHanteraren.Text = "Hantera Poddar";
@@ -92,7 +92,7 @@
             button5.FlatAppearance.MouseDownBackColor = Color.Navy;
             button5.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(261, 558);
+            button5.Location = new Point(257, 625);
             button5.Name = "button5";
             button5.Size = new Size(94, 29);
             button5.TabIndex = 8;
@@ -106,7 +106,7 @@
             button2.FlatAppearance.MouseDownBackColor = Color.Navy;
             button2.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(380, 558);
+            button2.Location = new Point(380, 625);
             button2.Name = "button2";
             button2.Size = new Size(94, 29);
             button2.TabIndex = 6;
@@ -193,17 +193,18 @@
             groupBox1.Controls.Add(listBox2);
             groupBox1.Location = new Point(524, 23);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(378, 294);
+            groupBox1.Size = new Size(378, 370);
             groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Avsnitt";
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(9, 170);
+            textBox2.Location = new Point(9, 239);
             textBox2.Multiline = true;
             textBox2.Name = "textBox2";
             textBox2.ReadOnly = true;
+            textBox2.ScrollBars = ScrollBars.Vertical;
             textBox2.Size = new Size(363, 108);
             textBox2.TabIndex = 2;
             textBox2.TextChanged += listBox2_SelectedIndexChanged;
@@ -235,7 +236,7 @@
             groupBox2.Controls.Add(button4);
             groupBox2.Controls.Add(textBox3);
             groupBox2.Controls.Add(label4);
-            groupBox2.Location = new Point(527, 331);
+            groupBox2.Location = new Point(521, 399);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(375, 298);
             groupBox2.TabIndex = 2;
@@ -299,7 +300,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(914, 641);
+            ClientSize = new Size(1068, 722);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Controls.Add(PoddHanteraren);

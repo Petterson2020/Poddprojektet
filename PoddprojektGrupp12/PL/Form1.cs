@@ -70,7 +70,7 @@ namespace PL
         private void Form1_Load(object sender, EventArgs e)
         {
             UpdateCategoryLists();
-            UpdatePodcastList(); // NY RAD: Laddar in dina sparade poddar direkt!
+            UpdatePodcastList(); // Laddar in dina sparade poddar direkt!
         }
 
         // Koden för att Spara Kategori
@@ -110,7 +110,7 @@ namespace PL
                 MessageBox.Show("Podden har lagts till!");
                 textBox1.Clear();
 
-                // NY RAD: Uppdaterar listan direkt så den nya podden dyker upp!
+                // Uppdaterar listan direkt så den nya podden dyker upp!
                 UpdatePodcastList();
             }
             catch (Exception ex)
@@ -146,6 +146,9 @@ namespace PL
                     {
                         _currentEpisodes = selectedPodcast.Episodes;
 
+                        // NY KOD: Uppdaterar label2 så den visar antal avsnitt!
+                        label2.Text = $"Avsnitt ({_currentEpisodes.Count} st)";
+
                         foreach (var episode in _currentEpisodes)
                         {
                             listBox2.Items.Add(episode.Title);
@@ -174,8 +177,8 @@ namespace PL
                     // 2. Översätter HTML-koder (som &amp; till & och &nbsp; till mellanslag)
                     cleanDescription = System.Net.WebUtility.HtmlDecode(cleanDescription);
 
-                    // 3. Visar den rena texten i beskrivningsrutan
-                    textBox2.Text = cleanDescription;
+                    // NY KOD: Visar publiceringsdatumet tillsammans med den rena texten i beskrivningsrutan
+                    textBox2.Text = $"Publicerades: {selectedEpisode.PublishDate}   |   Antal avsnitt i podden: {_currentEpisodes.Count} st\r\n\r\n{cleanDescription}";
                 }
                 catch (Exception ex)
                 {
@@ -283,7 +286,7 @@ namespace PL
             }
         }
 
-        // HÄR ÄR DEN NYA METODEN FÖR FILTRERING
+        // Metoden för filtrering
         private async void listBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBox3.SelectedIndex != -1)
@@ -320,5 +323,49 @@ namespace PL
                 }
             }
         }
+
+        // Ta bort podd-knappen
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            // 1. Kolla att användaren har markerat en podd i den stora listan
+            if (listBox1.SelectedIndex == -1)
+            {
+                MessageBox.Show("Du måste markera en podd i listan för att kunna ta bort den.");
+                return;
+            }
+
+            // 2. Hämta titeln på den markerade podden
+            string valdPodd = listBox1.SelectedItem.ToString();
+
+            // 3. Fråga om användaren är säker
+            DialogResult dialogResult = MessageBox.Show(
+                $"Är du säker på att du vill ta bort podden '{valdPodd}'?",
+                "Bekräfta borttagning",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (dialogResult == DialogResult.Yes)
+            {
+                try
+                {
+                    // 4. Säg åt logiken att ta bort podden
+                    await _podcastController.DeletePodcastAsync(valdPodd);
+
+                    // 5. Uppdatera listan så att podden försvinner från skärmen
+                    UpdatePodcastList();
+
+                    // 6. Rensa avsnittslistan och beskrivningen (eftersom podden inte finns längre)
+                    listBox2.Items.Clear();
+                    textBox2.Clear();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Kunde inte ta bort podden: " + ex.Message);
+                }
+            }
+        }
+
+        private void textBox2_TextChanged_1(object sender, EventArgs e) { }
+        private void groupBox1_Enter_1(object sender, EventArgs e) { }
     }
 }

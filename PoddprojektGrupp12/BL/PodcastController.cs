@@ -50,5 +50,10 @@ namespace BL
             // Använder RssReader för att bara hämta ner datan (utan att spara i databasen)
             return await _rssReader.GetPodcastAsync(url, "Förhandsgranskning");
         }
+
+        public async Task DeletePodcastAsync(string title)
+        {
+            await _podcastRepository.DeleteAsync(title);
+        }
     }
 }
