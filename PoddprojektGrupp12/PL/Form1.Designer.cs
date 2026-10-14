@@ -57,7 +57,7 @@
             // PoddHanteraren
             // 
             PoddHanteraren.Controls.Add(button7);
-            PoddHanteraren.Controls.Add(button3);
+            PoddHanteraren.Controls.Add(button5);
             PoddHanteraren.Controls.Add(button2);
             PoddHanteraren.Controls.Add(listBox1);
             PoddHanteraren.Controls.Add(button1);
@@ -92,12 +92,13 @@
             button3.FlatAppearance.MouseDownBackColor = Color.Navy;
             button3.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button3.FlatStyle = FlatStyle.Flat;
-            button3.Location = new Point(271, 558);
+            button3.Location = new Point(154, 249);
             button3.Name = "button3";
             button3.Size = new Size(94, 29);
             button3.TabIndex = 7;
             button3.Text = "Ändra";
             button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
             // 
             // button2
             // 
@@ -215,8 +216,8 @@
             // groupBox2
             // 
             groupBox2.Controls.Add(button6);
-            groupBox2.Controls.Add(button5);
             groupBox2.Controls.Add(listBox3);
+            groupBox2.Controls.Add(button3);
             groupBox2.Controls.Add(button4);
             groupBox2.Controls.Add(textBox3);
             groupBox2.Controls.Add(label4);
@@ -247,12 +248,13 @@
             button5.FlatAppearance.MouseDownBackColor = Color.Navy;
             button5.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(160, 249);
+            button5.Location = new Point(261, 558);
             button5.Name = "button5";
             button5.Size = new Size(94, 29);
             button5.TabIndex = 8;
             button5.Text = "Ändra";
             button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
             // 
             // listBox3
             // 

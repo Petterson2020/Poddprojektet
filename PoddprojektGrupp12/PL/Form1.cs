@@ -191,7 +191,7 @@ namespace PL
             {
                 MessageBox.Show("Kunde inte hämta podden: " + ex.Message);
             }
-            
+
         }
 
         private async void button6_Click(object sender, EventArgs e) // Ditt metodnamn kan heta något annat beroende på knappen
@@ -227,6 +227,44 @@ namespace PL
                 {
                     MessageBox.Show("Kunde inte ta bort kategorin: " + ex.Message);
                 }
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private async void button3_Click(object sender, EventArgs e)
+        {
+            if (listBox3.SelectedIndex == -1)
+            {
+                MessageBox.Show("Välj en kategori i listan som du vill ändra.");
+                return;
+            }
+
+            // 2. Kolla så att användaren har skrivit ett nytt namn i rutan
+            string oldName = listBox3.SelectedItem.ToString();
+            string newName = textBox3.Text;
+
+            if (string.IsNullOrWhiteSpace(newName))
+            {
+                MessageBox.Show("Skriv in det nya namnet i textrutan (Namn:).");
+                return;
+            }
+
+            try
+            {
+                // 3. Säg åt logiklagret att ändra namnet
+                await _categoryController.UpdateCategoryAsync(oldName, newName);
+
+                // 4. Rensa textrutan och uppdatera listan så det nya namnet syns
+                textBox3.Clear();
+                UpdateCategoryLists();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Kunde inte ändra kategorin: " + ex.Message);
             }
         }
     }

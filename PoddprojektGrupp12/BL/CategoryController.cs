@@ -21,7 +21,6 @@ namespace BL
             // 1. Affärslogik & Validering
             if (string.IsNullOrWhiteSpace(name))
             {
-                // Detta fel kan du sedan fånga med try/catch i Form1 och visa som en MessageBox
                 throw new ArgumentException("Kategorinamnet får inte vara tomt.");
             }
 
@@ -42,29 +41,40 @@ namespace BL
             return await _categoryRepository.GetAllAsync();
         }
 
-        public async Task UpdateCategoryAsync(string id, string newName)
+        // UPPDATERAD: Tar nu emot oldName och newName istället för id
+        public async Task UpdateCategoryAsync(string oldName, string newName)
         {
             if (string.IsNullOrWhiteSpace(newName))
             {
                 throw new ArgumentException("Det nya kategorinamnet får inte vara tomt.");
             }
 
-            Category updatedCategory = new Category
-            {
-                Id = id,
-                Name = newName
-            };
+            // 1. Hämta alla kategorier för att hitta den vi vill ändra
+            var allCategories = await _categoryRepository.GetAllAsync();
+            var categoryToUpdate = System.Linq.Enumerable.FirstOrDefault(allCategories, c => c.Name == oldName);
 
-            await _categoryRepository.UpdateAsync(updatedCategory);
+            if (categoryToUpdate != null)
+            {
+                // 2. Byt ut namnet till det nya
+                categoryToUpdate.Name = newName;
+
+                // 3. Skicka den uppdaterade kategorin till databasen
+                await _categoryRepository.UpdateAsync(categoryToUpdate);
+            }
+            else
+            {
+                throw new Exception("Kunde inte hitta kategorin som skulle ändras.");
+            }
         }
 
-        public async Task DeleteCategoryAsync(string id)
+        // UPPDATERAD: Tar nu emot categoryName istället för id
+        public async Task DeleteCategoryAsync(string categoryName)
         {
             // OBS! Enligt kraven måste användaren få en bekräftelsefråga när de raderar.
             // Själva MessageBox-frågan ("Är du säker?") bygger du i Form1, 
             // men om de klickar "Ja", anropas den här metoden.
 
-            await _categoryRepository.DeleteAsync(id);
+            await _categoryRepository.DeleteAsync(categoryName);
         }
     }
 }

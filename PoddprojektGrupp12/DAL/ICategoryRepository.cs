@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Models;
 
@@ -11,6 +9,6 @@ namespace DAL
         Task CreateAsync(Category category);
         Task<List<Category>> GetAllAsync();
         Task UpdateAsync(Category category);
-        Task DeleteAsync(string id);
+        Task DeleteAsync(string categoryName);
     }
 }

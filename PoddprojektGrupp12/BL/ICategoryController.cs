@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Models;
 
 namespace BL
@@ -9,7 +8,7 @@ namespace BL
     {
         Task CreateCategoryAsync(string name);
         Task<List<Category>> GetAllCategoriesAsync();
-        Task UpdateCategoryAsync(string id, string name);
-        Task DeleteCategoryAsync(string id);
+        Task DeleteCategoryAsync(string categoryName);
+        Task UpdateCategoryAsync(string oldName, string newName); // Denna behövs för Ändra-knappen!
     }
 }

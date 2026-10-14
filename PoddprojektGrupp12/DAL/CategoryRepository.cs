@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Models;
 using MongoDB.Driver;
@@ -35,7 +34,7 @@ namespace DAL
             await _categories.ReplaceOneAsync(c => c.Id == category.Id, category);
         }
 
-        // UPPDATERAD: Nu raderar vi baserat på Name istället för Id
+        // VIKTIGT: Måste heta categoryName här också för att matcha interfacet!
         public async Task DeleteAsync(string categoryName)
         {
             await _categories.DeleteOneAsync(c => c.Name == categoryName);
