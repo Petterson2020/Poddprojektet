@@ -15,5 +15,7 @@ namespace BL
         // NY: Hämtar och förhandsgranskar en podd från nätet (för Hämta-knappen)
         Task<Podcast> GetPodcastPreviewAsync(string url);
         Task DeletePodcastAsync(string title); // (Eller DeleteAsync i Repositoryt)
+        Task UpdatePodcastAsync(string oldTitle, string newTitle, string newCategory);
+
     }
 }

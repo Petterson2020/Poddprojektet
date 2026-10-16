@@ -9,6 +9,6 @@ namespace DAL
         Task CreateAsync(Category category);
         Task<List<Category>> GetAllAsync();
         Task UpdateAsync(Category category);
-        Task DeleteAsync(string categoryName);
+        Task DeleteAsync(string id);
     }
 }

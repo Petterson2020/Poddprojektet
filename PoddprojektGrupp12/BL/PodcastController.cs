@@ -53,7 +53,50 @@ namespace BL
 
         public async Task DeletePodcastAsync(string title)
         {
-            await _podcastRepository.DeleteAsync(title);
+            // 1. Hämta alla poddar
+            var allPodcasts = await _podcastRepository.GetAllAsync();
+
+            // 2. Hitta podden med rätt titel
+            var podcastToDelete = System.Linq.Enumerable.FirstOrDefault(allPodcasts, p => p.Title == title);
+
+            if (podcastToDelete != null)
+            {
+                // 3. Skicka ID:t till databasen istället för titeln
+                await _podcastRepository.DeleteAsync(podcastToDelete.Id);
+            }
+            else
+            {
+                throw new Exception("Kunde inte hitta podden i databasen.");
+            }
+        }
+
+        public async Task UpdatePodcastAsync(string oldTitle, string newTitle, string newCategory)
+        {
+            // 1. Hämta alla poddar för att hitta rätt
+            var allPodcasts = await _podcastRepository.GetAllAsync();
+            var podcastToUpdate = System.Linq.Enumerable.FirstOrDefault(allPodcasts, p => p.Title == oldTitle);
+
+            if (podcastToUpdate != null)
+            {
+                // 2. Ändra titeln om användaren skrivit in en ny
+                if (!string.IsNullOrWhiteSpace(newTitle))
+                {
+                    podcastToUpdate.Title = newTitle;
+                }
+
+                // 3. Ändra kategorin om användaren valt en ny
+                if (!string.IsNullOrWhiteSpace(newCategory))
+                {
+                    podcastToUpdate.Category = newCategory;
+                }
+
+                // 4. Spara ändringarna till databasen
+                await _podcastRepository.UpdateAsync(podcastToUpdate);
+            }
+            else
+            {
+                throw new Exception("Kunde inte hitta podden som skulle ändras.");
+            }
         }
     }
 }

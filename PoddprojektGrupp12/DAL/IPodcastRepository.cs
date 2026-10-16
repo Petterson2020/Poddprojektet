@@ -9,6 +9,6 @@ namespace DAL
         Task CreateAsync(Podcast podcast);
         Task<List<Podcast>> GetAllAsync();
         Task UpdateAsync(Podcast podcast);
-        Task DeleteAsync(string title); // Rätt namn och rätt variabel!
+        Task DeleteAsync(string id);
     }
 }

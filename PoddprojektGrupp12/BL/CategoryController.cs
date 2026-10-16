@@ -67,14 +67,19 @@ namespace BL
             }
         }
 
-        // UPPDATERAD: Tar nu emot categoryName istället för id
         public async Task DeleteCategoryAsync(string categoryName)
         {
-            // OBS! Enligt kraven måste användaren få en bekräftelsefråga när de raderar.
-            // Själva MessageBox-frågan ("Är du säker?") bygger du i Form1, 
-            // men om de klickar "Ja", anropas den här metoden.
+            var allCategories = await _categoryRepository.GetAllAsync();
+            var categoryToDelete = System.Linq.Enumerable.FirstOrDefault(allCategories, c => c.Name == categoryName);
 
-            await _categoryRepository.DeleteAsync(categoryName);
+            if (categoryToDelete != null)
+            {
+                await _categoryRepository.DeleteAsync(categoryToDelete.Id);
+            }
+            else
+            {
+                throw new Exception("Kunde inte hitta kategorin i databasen.");
+            }
         }
     }
 }
