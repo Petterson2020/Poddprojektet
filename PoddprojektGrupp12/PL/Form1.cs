@@ -104,11 +104,23 @@ namespace PL
             try
             {
                 string selectedCategory = comboBox1.SelectedItem.ToString();
-                await _podcastController.AddPodcastAsync(textBox1.Text, selectedCategory);
-                MessageBox.Show("Podden har lagts till!");
-                textBox1.Clear();
 
-                // Uppdaterar listan direkt
+                // Hämta det egna namnet från din nya "Namn"-ruta (troligen textBox4)
+                string egetNamn = "";
+                if (textBox4 != null)
+                {
+                    egetNamn = textBox4.Text;
+                }
+
+                // Skicka med "egetNamn" till Controllern
+                await _podcastController.AddPodcastAsync(textBox1.Text, selectedCategory, egetNamn);
+
+                MessageBox.Show("Podden har lagts till!");
+
+                // Rensa båda fälten efter sparning
+                textBox1.Clear();
+                if (textBox4 != null) textBox4.Clear();
+
                 UpdatePodcastList();
             }
             catch (Exception ex)

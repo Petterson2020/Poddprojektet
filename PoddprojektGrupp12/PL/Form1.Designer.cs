@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             PoddHanteraren = new GroupBox();
+            label5 = new Label();
+            button8 = new Button();
             textBox4 = new TextBox();
             button7 = new Button();
             button5 = new Button();
@@ -50,7 +52,6 @@
             button4 = new Button();
             textBox3 = new TextBox();
             label4 = new Label();
-            button8 = new Button();
             PoddHanteraren.SuspendLayout();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
@@ -58,6 +59,7 @@
             // 
             // PoddHanteraren
             // 
+            PoddHanteraren.Controls.Add(label5);
             PoddHanteraren.Controls.Add(button8);
             PoddHanteraren.Controls.Add(textBox4);
             PoddHanteraren.Controls.Add(button7);
@@ -79,11 +81,30 @@
             PoddHanteraren.Text = "Hantera Poddar";
             PoddHanteraren.Enter += groupBox1_Enter;
             // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(11, 159);
+            label5.Name = "label5";
+            label5.Size = new Size(84, 32);
+            label5.TabIndex = 10;
+            label5.Text = "Namn:";
+            // 
+            // button8
+            // 
+            button8.Location = new Point(23, 875);
+            button8.Name = "button8";
+            button8.Size = new Size(150, 46);
+            button8.TabIndex = 3;
+            button8.Text = "Visa Alla Poddar";
+            button8.UseVisualStyleBackColor = true;
+            button8.Click += button8_Click;
+            // 
             // textBox4
             // 
-            textBox4.Location = new Point(8, 954);
+            textBox4.Location = new Point(177, 159);
             textBox4.Name = "textBox4";
-            textBox4.Size = new Size(200, 39);
+            textBox4.Size = new Size(430, 39);
             textBox4.TabIndex = 9;
             // 
             // button7
@@ -104,12 +125,12 @@
             button5.FlatAppearance.MouseDownBackColor = Color.Navy;
             button5.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(11, 1001);
+            button5.Location = new Point(23, 1001);
             button5.Margin = new Padding(5);
             button5.Name = "button5";
-            button5.Size = new Size(200, 46);
+            button5.Size = new Size(318, 46);
             button5.TabIndex = 8;
-            button5.Text = "Ändra Namn";
+            button5.Text = "Ändra Namn/Kategori";
             button5.UseVisualStyleBackColor = false;
             button5.Click += button5_Click;
             // 
@@ -119,7 +140,7 @@
             button2.FlatAppearance.MouseDownBackColor = Color.Navy;
             button2.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(232, 1001);
+            button2.Location = new Point(372, 1001);
             button2.Margin = new Padding(5);
             button2.Name = "button2";
             button2.Size = new Size(153, 46);
@@ -130,10 +151,10 @@
             // listBox1
             // 
             listBox1.FormattingEnabled = true;
-            listBox1.Location = new Point(23, 211);
+            listBox1.Location = new Point(23, 307);
             listBox1.Margin = new Padding(5);
             listBox1.Name = "listBox1";
-            listBox1.Size = new Size(756, 644);
+            listBox1.Size = new Size(756, 548);
             listBox1.TabIndex = 5;
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
@@ -143,7 +164,7 @@
             button1.FlatAppearance.MouseDownBackColor = Color.Navy;
             button1.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
             button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(618, 155);
+            button1.Location = new Point(618, 223);
             button1.Margin = new Padding(5);
             button1.Name = "button1";
             button1.Size = new Size(153, 46);
@@ -155,7 +176,7 @@
             // comboBox1
             // 
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(177, 155);
+            comboBox1.Location = new Point(177, 224);
             comboBox1.Margin = new Padding(5);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(430, 40);
@@ -164,7 +185,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(11, 160);
+            label2.Location = new Point(11, 227);
             label2.Margin = new Padding(5, 0, 5, 0);
             label2.Name = "label2";
             label2.Size = new Size(129, 32);
@@ -223,7 +244,7 @@
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(15, 290);
+            textBox2.Location = new Point(15, 288);
             textBox2.Margin = new Padding(5);
             textBox2.Multiline = true;
             textBox2.Name = "textBox2";
@@ -329,16 +350,6 @@
             label4.TabIndex = 0;
             label4.Text = "Namn:";
             // 
-            // button8
-            // 
-            button8.Location = new Point(23, 875);
-            button8.Name = "button8";
-            button8.Size = new Size(150, 46);
-            button8.TabIndex = 3;
-            button8.Text = "Visa Alla Poddar";
-            button8.UseVisualStyleBackColor = true;
-            button8.Click += button8_Click;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(13F, 32F);
@@ -385,5 +396,6 @@
         private Button button7;
         private TextBox textBox4;
         private Button button8;
+        private Label label5;
     }
 }

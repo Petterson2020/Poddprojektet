@@ -17,20 +17,26 @@ namespace BL
             _rssReader = new RssReader();
         }
 
-        public async Task AddPodcastAsync(string url, string categoryName)
+        public async Task AddPodcastAsync(string url, string categoryName, string customTitle = "")
         {
             if (string.IsNullOrWhiteSpace(url))
             {
                 throw new ArgumentException("URL får inte vara tomt!");
             }
 
-            // 1. Låter din RssReader i DAL hämta podden och alla avsnitt från nätet
+            // 1. Låter RssReader hämta podden och alla avsnitt från nätet
             Podcast newPodcast = await _rssReader.GetPodcastAsync(url, categoryName);
 
             // 2. Sätter ett unikt ID för databasen
             newPodcast.Id = Guid.NewGuid().ToString();
 
-            // 3. Sparar den kompletta podden i databasen via Repository
+            // NY KOD: 3. Ersätt titeln OM användaren skrivit in ett eget namn i UI:t
+            if (!string.IsNullOrWhiteSpace(customTitle))
+            {
+                newPodcast.Title = customTitle;
+            }
+
+            // 4. Sparar den kompletta podden i databasen
             await _podcastRepository.CreateAsync(newPodcast);
         }
 

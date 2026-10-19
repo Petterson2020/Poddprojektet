@@ -7,7 +7,8 @@ namespace BL
     public interface IPodcastController
     {
         // Sparar en ny podd i databasen
-        Task AddPodcastAsync(string url, string categoryName);
+        // Ändra denna rad:
+        Task AddPodcastAsync(string url, string categoryName, string customTitle = "");
 
         // Hämtar alla sparade poddar från databasen
         Task<List<Podcast>> GetAllPodcastsAsync();
