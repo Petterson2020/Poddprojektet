@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Threading.Tasks;
 using Models;
 
 namespace DAL
 {
     public interface IRssReader
     {
-        Task<Podcast> GetPodcastAsync(string url, string categoryName);
+        Task<Podcast> GetPodcastAsync(string url);
     }
 }

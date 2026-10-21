@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text.RegularExpressions; // För att tvätta bort HTML-taggar
 using BL;
 using Models;
 
@@ -12,268 +15,235 @@ namespace PL
         private readonly IPodcastController _podcastController;
         private readonly ICategoryController _categoryController;
 
-        // Vårt arbetsminne för att komma ihåg avsnitten som visas just nu
-        private List<Episode> _currentEpisodes = new List<Episode>();
+        // Cache så att vi inte hämtar allt från databasen vid varje klick
+        private List<Podcast> _podcasts = new();
+        private List<Category> _categories = new();
 
         public Form1()
         {
             InitializeComponent();
             _podcastController = new PodcastController();
             _categoryController = new CategoryController();
+
+            // Listorna innehåller riktiga objekt (med Id) men visar bara titel/namn
+            listBox1.DisplayMember = nameof(Podcast.Title);
+            listBox2.DisplayMember = nameof(Episode.Title);
+            listBox3.DisplayMember = nameof(Category.Name);
+            comboBox1.DisplayMember = nameof(Category.Name);
         }
 
-        private async void UpdateCategoryLists()
+        // ---------- Start ----------
+
+        private async void Form1_Load(object? sender, EventArgs e)
+        {
+            await LoadCategoriesAsync();
+            await LoadPodcastsAsync();
+        }
+
+        // ---------- Hjälpmetoder: laddning och visning ----------
+
+        private async Task LoadCategoriesAsync()
         {
             try
             {
-                // Rensa listBox3 (Kategorilistan) och comboBox1 (Rullgardinsmenyn)
+                _categories = (await _categoryController.GetAllCategoriesAsync())
+                    .OrderBy(c => c.Name).ToList();
+
                 listBox3.Items.Clear();
                 comboBox1.Items.Clear();
-
-                var categories = await _categoryController.GetAllCategoriesAsync();
-                foreach (var category in categories)
+                foreach (Category category in _categories)
                 {
-                    listBox3.Items.Add(category.Name);
-                    comboBox1.Items.Add(category.Name);
+                    listBox3.Items.Add(category);
+                    comboBox1.Items.Add(category);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ett fel uppstod när kategorierna skulle laddas: " + ex.Message);
+                ShowError("Kunde inte ladda kategorierna.", ex);
             }
         }
 
-        // Uppdaterar den stora poddlistan (listBox1)
-        private async void UpdatePodcastList()
+        // Laddar om ALLA poddar från databasen och nollställer filter/avsnittsvy
+        private async Task LoadPodcastsAsync()
         {
             try
             {
-                listBox1.Items.Clear();
-                var podcasts = await _podcastController.GetAllPodcastsAsync();
-                if (podcasts != null)
-                {
-                    foreach (var podcast in podcasts)
-                    {
-                        listBox1.Items.Add(podcast.Title);
-                    }
-                }
+                _podcasts = await _podcastController.GetAllPodcastsAsync();
+                listBox3.ClearSelected();
+                ShowPodcasts(_podcasts);
+                ClearEpisodeView();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Kunde inte ladda poddar: " + ex.Message);
+                ShowError("Kunde inte ladda poddarna.", ex);
             }
         }
 
-        // Ladda in listorna direkt när programmet startar
-        private void Form1_Load(object sender, EventArgs e)
+        private void ShowPodcasts(IEnumerable<Podcast> podcasts)
         {
-            UpdateCategoryLists();
-            UpdatePodcastList();
+            listBox1.Items.Clear();
+            foreach (Podcast podcast in podcasts.OrderBy(p => p.Title))
+            {
+                listBox1.Items.Add(podcast);
+            }
         }
 
-        // Spara Kategori
-        private async void btnSaveCategory_Click(object sender, EventArgs e)
+        private void ShowEpisodes(Podcast podcast)
         {
-            if (string.IsNullOrWhiteSpace(textBox3.Text))
+            listBox2.Items.Clear();
+            textBox2.Clear();
+            foreach (Episode episode in podcast.Episodes)
             {
-                MessageBox.Show("Du måste skriva ett namn på kategorin.");
+                listBox2.Items.Add(episode);
+            }
+            groupBox1.Text = $"Avsnitt ({podcast.Episodes.Count} st)";
+        }
+
+        private void ClearEpisodeView()
+        {
+            listBox2.Items.Clear();
+            textBox2.Clear();
+            groupBox1.Text = "Avsnitt";
+        }
+
+        // ---------- Hjälpmetoder: validering och meddelanden ----------
+
+        private static bool TryGetFeedUrl(string input, out string url)
+        {
+            url = input.Trim();
+            return Uri.TryCreate(url, UriKind.Absolute, out Uri? uri)
+                && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+        }
+
+        private static bool SameUrl(string? a, string? b) =>
+            string.Equals(a?.Trim().TrimEnd('/'), b?.Trim().TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+
+        private static bool Confirm(string text) =>
+            MessageBox.Show(text, "Bekräfta borttagning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+                == DialogResult.Yes;
+
+        private static void ShowError(string message, Exception ex)
+        {
+            // Våra egna fel har användarvänliga meddelanden, övriga är oväntade
+            string details = ex is PodcastAppException ? ex.Message : "Oväntat fel: " + ex.Message;
+            MessageBox.Show(message + Environment.NewLine + details, "Fel",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        // ---------- Poddar ----------
+
+        // Hämta-knappen: förhandsgranska flödet utan att spara
+        private async void btnHamta_Click(object? sender, EventArgs e)
+        {
+            if (!TryGetFeedUrl(textBox1.Text, out string url))
+            {
+                MessageBox.Show("Ange en giltig webbadress som börjar med http:// eller https://.");
                 return;
             }
 
+            button7.Enabled = false;
             try
             {
-                await _categoryController.CreateCategoryAsync(textBox3.Text);
-                textBox3.Clear();
-                UpdateCategoryLists();
+                Podcast preview = await _podcastController.GetPodcastPreviewAsync(url);
+                listBox1.ClearSelected();
+                ShowEpisodes(preview);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Kunde inte spara: " + ex.Message);
+                ShowError("Kunde inte hämta podden.", ex);
+            }
+            finally
+            {
+                button7.Enabled = true;
             }
         }
 
-        // Spara Podd
-        private async void btnSavePodcast_Click(object sender, EventArgs e)
+        // Spara podd
+        private async void btnSavePodcast_Click(object? sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBox1.Text) || comboBox1.SelectedIndex == -1)
+            if (!TryGetFeedUrl(textBox1.Text, out string url))
             {
-                MessageBox.Show("Vänligen ange en URL och välj en kategori.");
+                MessageBox.Show("Ange en giltig webbadress som börjar med http:// eller https://.");
                 return;
             }
 
+            if (comboBox1.SelectedItem is not Category category)
+            {
+                MessageBox.Show("Välj en kategori.");
+                return;
+            }
+
+            if (_podcasts.Any(p => SameUrl(p.Url, url)))
+            {
+                MessageBox.Show("Du prenumererar redan på det här poddflödet.");
+                return;
+            }
+
+            button1.Enabled = false;
             try
             {
-                string selectedCategory = comboBox1.SelectedItem.ToString();
-
-                // Hämta det egna namnet från din nya "Namn"-ruta (troligen textBox4)
-                string egetNamn = "";
-                if (textBox4 != null)
-                {
-                    egetNamn = textBox4.Text;
-                }
-
-                // Skicka med "egetNamn" till Controllern
-                await _podcastController.AddPodcastAsync(textBox1.Text, selectedCategory, egetNamn);
-
-                MessageBox.Show("Podden har lagts till!");
-
-                // Rensa båda fälten efter sparning
+                await _podcastController.AddPodcastAsync(url, category.Name, textBox4.Text.Trim());
                 textBox1.Clear();
-                if (textBox4 != null) textBox4.Clear();
-
-                UpdatePodcastList();
+                textBox4.Clear();
+                comboBox1.SelectedIndex = -1;
+                await LoadPodcastsAsync();
+                MessageBox.Show("Podden har lagts till!");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Fel vid sparning: " + ex.Message);
+                ShowError("Fel vid sparning.", ex);
+            }
+            finally
+            {
+                button1.Enabled = true;
             }
         }
 
-        // När man klickar på en podd i listan
-        private async void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        // Välj podd i listan -> visa dess avsnitt
+        private void listBox1_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            if (listBox1.SelectedIndex != -1)
+            if (listBox1.SelectedItem is Podcast podcast)
             {
-                try
-                {
-                    string selectedTitle = listBox1.SelectedItem.ToString();
-                    var allPodcasts = await _podcastController.GetAllPodcastsAsync();
-                    var selectedPodcast = System.Linq.Enumerable.FirstOrDefault(allPodcasts, p => p.Title == selectedTitle);
-
-                    listBox2.Items.Clear();
-                    textBox2.Clear();
-
-                    if (selectedPodcast != null && selectedPodcast.Episodes != null)
-                    {
-                        _currentEpisodes = selectedPodcast.Episodes;
-
-                        // FIX: Uppdaterar groupBox1 istället för label2 så antalet hamnar rätt
-                        label2.Text = "Kategorier:";
-                        groupBox1.Text = $"Avsnitt ({_currentEpisodes.Count} st)";
-
-                        foreach (var episode in _currentEpisodes)
-                        {
-                            listBox2.Items.Add(episode.Title);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Kunde inte ladda avsnitt: " + ex.Message);
-                }
+                ShowEpisodes(podcast);
             }
         }
 
-        // När man klickar på ett avsnitt
-        private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
+        // Välj avsnitt -> visa publiceringsdatum och beskrivning
+        private void listBox2_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            if (listBox2.SelectedIndex != -1 && _currentEpisodes != null)
+            if (listBox2.SelectedItem is not Episode episode)
             {
-                try
-                {
-                    var selectedEpisode = _currentEpisodes[listBox2.SelectedIndex];
-
-                    // Tvättar bort HTML-taggar
-                    string cleanDescription = Regex.Replace(selectedEpisode.Description, "<.*?>", string.Empty);
-                    cleanDescription = System.Net.WebUtility.HtmlDecode(cleanDescription);
-
-                    textBox2.Text = $"Publicerades: {selectedEpisode.PublishDate}   |   Antal avsnitt i podden: {_currentEpisodes.Count} st\r\n\r\n{cleanDescription}";
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Kunde inte ladda beskrivningen: " + ex.Message);
-                }
-            }
-        }
-
-        // Hämta-knappen
-        private async void btnHamta_Click(object sender, EventArgs e)
-        {
-            string url = textBox1.Text;
-            if (string.IsNullOrWhiteSpace(url))
-            {
-                MessageBox.Show("Du måste skriva in en länk först!");
                 return;
             }
 
             try
             {
-                var podcastPreview = await _podcastController.GetPodcastPreviewAsync(url);
-                listBox2.Items.Clear();
-                textBox2.Clear();
+                // Tvätta bort HTML-taggar och avkoda t.ex. &amp;
+                string description = Regex.Replace(episode.Description ?? "", "<.*?>", string.Empty);
+                description = WebUtility.HtmlDecode(description);
 
-                if (podcastPreview.Episodes != null)
-                {
-                    _currentEpisodes = podcastPreview.Episodes;
-                    foreach (var episode in _currentEpisodes)
-                    {
-                        listBox2.Items.Add(episode.Title);
-                    }
-                }
+                textBox2.Text = $"Publicerades: {episode.PublishDate}   |   Antal avsnitt i podden: {listBox2.Items.Count} st"
+                    + Environment.NewLine + Environment.NewLine + description;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Kunde inte hämta podden: " + ex.Message);
+                ShowError("Kunde inte visa beskrivningen.", ex);
             }
         }
 
-        // Ta bort Kategori
-        private async void button6_Click(object sender, EventArgs e)
+        // Ändra namn/kategori på vald podd
+        private async void button5_Click(object? sender, EventArgs e)
         {
-            if (listBox3.SelectedIndex == -1)
-            {
-                MessageBox.Show("Du måste markera en kategori i listan för att kunna ta bort den.");
-                return;
-            }
-
-            string valdKategori = listBox3.SelectedItem.ToString();
-            DialogResult dialogResult = MessageBox.Show(
-                $"Är du säker på att du vill ta bort kategorin '{valdKategori}'?",
-                "Bekräfta borttagning",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
-
-            if (dialogResult == DialogResult.Yes)
-            {
-                try
-                {
-                    await _categoryController.DeleteCategoryAsync(valdKategori);
-                    UpdateCategoryLists();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Kunde inte ta bort kategorin: " + ex.Message);
-                }
-            }
-        }
-
-        // Ändra Podd
-        private async void button5_Click(object sender, EventArgs e)
-        {
-            // Kolla om en podd är vald
-            if (listBox1.SelectedIndex == -1)
+            if (listBox1.SelectedItem is not Podcast podcast)
             {
                 MessageBox.Show("Du måste markera en podd i listan för att kunna ändra den.");
                 return;
             }
 
-            string gammalTitel = listBox1.SelectedItem.ToString();
+            string newTitle = textBox4.Text.Trim();
+            string newCategory = (comboBox1.SelectedItem as Category)?.Name ?? "";
 
-            // Vi hämtar det nya namnet från vår nyskapade ruta textBox4!
-            string nyTitel = "";
-            if (textBox4 != null)
-            {
-                nyTitel = textBox4.Text;
-            }
-
-            string nyKategori = "";
-            if (comboBox1.SelectedIndex != -1)
-            {
-                nyKategori = comboBox1.SelectedItem.ToString();
-            }
-
-            // Kolla så de fyllt i antingen nytt namn eller ny kategori
-            if (string.IsNullOrWhiteSpace(nyTitel) && string.IsNullOrWhiteSpace(nyKategori))
+            if (newTitle == "" && newCategory == "")
             {
                 MessageBox.Show("Skriv ett nytt namn i rutan eller välj en ny kategori för att ändra.");
                 return;
@@ -281,148 +251,155 @@ namespace PL
 
             try
             {
-                await _podcastController.UpdatePodcastAsync(gammalTitel, nyTitel, nyKategori);
-                MessageBox.Show("Podden har uppdaterats!");
-
-                if (textBox4 != null) textBox4.Clear();
+                await _podcastController.UpdatePodcastAsync(podcast.Id, newTitle, newCategory);
+                textBox4.Clear();
                 comboBox1.SelectedIndex = -1;
-
-                // Ladda om listan så det nya namnet syns!
-                UpdatePodcastList();
+                await LoadPodcastsAsync();
+                MessageBox.Show("Podden har uppdaterats!");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Kunde inte ändra podden: " + ex.Message);
-            }
-        }
-
-        // Ändra Kategori
-        private async void button3_Click(object sender, EventArgs e)
-        {
-            if (listBox3.SelectedIndex == -1)
-            {
-                MessageBox.Show("Välj en kategori i listan som du vill ändra.");
-                return;
-            }
-
-            string oldName = listBox3.SelectedItem.ToString();
-            string newName = textBox3.Text;
-
-            if (string.IsNullOrWhiteSpace(newName))
-            {
-                MessageBox.Show("Skriv in det nya namnet i textrutan (Namn:).");
-                return;
-            }
-
-            try
-            {
-                await _categoryController.UpdateCategoryAsync(oldName, newName);
-                textBox3.Clear();
-                UpdateCategoryLists();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Kunde inte ändra kategorin: " + ex.Message);
-            }
-        }
-
-        // Filtrera poddar på kategori
-        private async void listBox3_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listBox3.SelectedIndex != -1)
-            {
-                string valdKategori = listBox3.SelectedItem.ToString();
-                textBox3.Text = valdKategori;
-
-                try
-                {
-                    var allPodcasts = await _podcastController.GetAllPodcastsAsync();
-                    listBox1.Items.Clear();
-
-                    if (allPodcasts != null)
-                    {
-                        foreach (var podcast in allPodcasts)
-                        {
-                            if (podcast.Category == valdKategori)
-                            {
-                                listBox1.Items.Add(podcast.Title);
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Kunde inte filtrera poddar: " + ex.Message);
-                }
+                ShowError("Kunde inte ändra podden.", ex);
             }
         }
 
         // Ta bort podd
-        private async void button2_Click(object sender, EventArgs e)
+        private async void button2_Click(object? sender, EventArgs e)
         {
-            if (listBox1.SelectedIndex == -1)
+            if (listBox1.SelectedItem is not Podcast podcast)
             {
                 MessageBox.Show("Du måste markera en podd i listan för att kunna ta bort den.");
                 return;
             }
 
-            string valdPodd = listBox1.SelectedItem.ToString();
-            DialogResult dialogResult = MessageBox.Show(
-                $"Är du säker på att du vill ta bort podden '{valdPodd}'?",
-                "Bekräfta borttagning",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
-
-            if (dialogResult == DialogResult.Yes)
+            if (!Confirm($"Är du säker på att du vill ta bort podden '{podcast.Title}'?"))
             {
-                try
-                {
-                    await _podcastController.DeletePodcastAsync(valdPodd);
-                    UpdatePodcastList();
-
-                    listBox2.Items.Clear();
-                    textBox2.Clear();
-                    groupBox1.Text = "Avsnitt";
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Kunde inte ta bort podden: " + ex.Message);
-                }
+                return;
             }
-        }
 
-        // Tomma metoder (Behålls för att inte förstöra event-kopplingar i Designern)
-        private void groupBox1_Enter(object sender, EventArgs e) { }
-        private void groupBox1_Enter_1(object sender, EventArgs e) { }
-        private void label1_Click(object sender, EventArgs e) { }
-        private void textBox1_TextChanged(object sender, EventArgs e) { }
-        private void label2_Click(object sender, EventArgs e) { }
-        private void label3_Click(object sender, EventArgs e) { }
-        private void textBox2_TextChanged(object sender, EventArgs e) { }
-        private void textBox2_TextChanged_1(object sender, EventArgs e) { }
-
-        private void button8_Click(object sender, EventArgs e)
-        {
             try
             {
-                // 1. Anropa din befintliga metod för att ladda in ALLA poddar igen
-                UpdatePodcastList();
-
-                // 2. Avmarkera den valda kategorin i listan nere till höger, 
-                // så att det är tydligt att inget filter är aktivt just nu.
-                listBox3.SelectedIndex = -1;
-
-                // 3. Töm textrutan för "Nytt namn" under kategorier
-                textBox3.Clear();
-
-                // 4. Städa upp avsnittslistan och beskrivningen (eftersom ingen podd är vald längre)
-                listBox2.Items.Clear();
-                textBox2.Clear();
-                groupBox1.Text = "Avsnitt";
+                await _podcastController.DeletePodcastAsync(podcast.Id);
+                await LoadPodcastsAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Ett fel uppstod när poddarna skulle hämtas: " + ex.Message);
+                ShowError("Kunde inte ta bort podden.", ex);
+            }
+        }
+
+        // Visa alla poddar (tar bort kategorifiltret)
+        private async void button8_Click(object? sender, EventArgs e)
+        {
+            textBox3.Clear();
+            await LoadPodcastsAsync();
+        }
+
+        // ---------- Kategorier ----------
+
+        // Spara ny kategori
+        private async void btnSaveCategory_Click(object? sender, EventArgs e)
+        {
+            string name = textBox3.Text.Trim();
+
+            if (name == "")
+            {
+                MessageBox.Show("Du måste skriva ett namn på kategorin.");
+                return;
+            }
+
+            if (_categories.Any(c => string.Equals(c.Name, name, StringComparison.OrdinalIgnoreCase)))
+            {
+                MessageBox.Show("Det finns redan en kategori med det namnet.");
+                return;
+            }
+
+            try
+            {
+                await _categoryController.CreateCategoryAsync(name);
+                textBox3.Clear();
+                await LoadCategoriesAsync();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Kunde inte spara kategorin.", ex);
+            }
+        }
+
+        // Välj kategori -> fyll i namnrutan och filtrera poddlistan
+        private void listBox3_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (listBox3.SelectedItem is not Category category)
+            {
+                return;
+            }
+
+            textBox3.Text = category.Name;
+            ShowPodcasts(_podcasts.Where(p => p.Category == category.Name));
+            ClearEpisodeView();
+        }
+
+        // Ändra kategorinamn
+        private async void button3_Click(object? sender, EventArgs e)
+        {
+            if (listBox3.SelectedItem is not Category category)
+            {
+                MessageBox.Show("Välj en kategori i listan som du vill ändra.");
+                return;
+            }
+
+            string newName = textBox3.Text.Trim();
+
+            if (newName == "")
+            {
+                MessageBox.Show("Skriv in det nya namnet i textrutan (Namn:).");
+                return;
+            }
+
+            if (_categories.Any(c => c.Id != category.Id
+                && string.Equals(c.Name, newName, StringComparison.OrdinalIgnoreCase)))
+            {
+                MessageBox.Show("Det finns redan en kategori med det namnet.");
+                return;
+            }
+
+            try
+            {
+                await _categoryController.UpdateCategoryAsync(category.Id, newName);
+                textBox3.Clear();
+                await LoadCategoriesAsync();
+                await LoadPodcastsAsync(); // poddarnas kategorinamn har också ändrats
+            }
+            catch (Exception ex)
+            {
+                ShowError("Kunde inte ändra kategorin.", ex);
+            }
+        }
+
+        // Ta bort kategori
+        private async void button6_Click(object? sender, EventArgs e)
+        {
+            if (listBox3.SelectedItem is not Category category)
+            {
+                MessageBox.Show("Du måste markera en kategori i listan för att kunna ta bort den.");
+                return;
+            }
+
+            if (!Confirm($"Är du säker på att du vill ta bort kategorin '{category.Name}'?"))
+            {
+                return;
+            }
+
+            try
+            {
+                await _categoryController.DeleteCategoryAsync(category.Id);
+                textBox3.Clear();
+                await LoadCategoriesAsync();
+                await LoadPodcastsAsync();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Kunde inte ta bort kategorin.", ex);
             }
         }
     }

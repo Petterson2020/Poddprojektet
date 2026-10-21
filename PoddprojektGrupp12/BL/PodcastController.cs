@@ -11,98 +11,68 @@ namespace BL
         private readonly IPodcastRepository _podcastRepository;
         private readonly IRssReader _rssReader;
 
-        public PodcastController()
+        // Standardkonstruktor så att PL inte behöver känna till DAL
+        public PodcastController() : this(new PodcastRepository(), new RssReader()) { }
+
+        // Konstruktor där beroenden skickas in (lättare att byta ut/testa)
+        public PodcastController(IPodcastRepository podcastRepository, IRssReader rssReader)
         {
-            _podcastRepository = new PodcastRepository();
-            _rssReader = new RssReader();
+            _podcastRepository = podcastRepository;
+            _rssReader = rssReader;
         }
 
         public async Task AddPodcastAsync(string url, string categoryName, string customTitle = "")
         {
             if (string.IsNullOrWhiteSpace(url))
             {
-                throw new ArgumentException("URL får inte vara tomt!");
+                throw new ArgumentException("URL får inte vara tom.");
             }
 
-            // 1. Låter RssReader hämta podden och alla avsnitt från nätet
-            Podcast newPodcast = await _rssReader.GetPodcastAsync(url, categoryName);
+            Podcast podcast = await _rssReader.GetPodcastAsync(url.Trim());
+            podcast.Id = Guid.NewGuid().ToString();
+            podcast.Category = categoryName;
 
-            // 2. Sätter ett unikt ID för databasen
-            newPodcast.Id = Guid.NewGuid().ToString();
-
-            // NY KOD: 3. Ersätt titeln OM användaren skrivit in ett eget namn i UI:t
             if (!string.IsNullOrWhiteSpace(customTitle))
             {
-                newPodcast.Title = customTitle;
+                podcast.Title = customTitle.Trim();
             }
 
-            // 4. Sparar den kompletta podden i databasen
-            await _podcastRepository.CreateAsync(newPodcast);
+            await _podcastRepository.CreateAsync(podcast);
         }
 
-        public async Task<List<Podcast>> GetAllPodcastsAsync()
-        {
-            return await _podcastRepository.GetAllAsync();
-        }
+        public Task<List<Podcast>> GetAllPodcastsAsync() => _podcastRepository.GetAllAsync();
 
-        // NY METOD: Används av "Hämta"-knappen för att förhandsgranska utan att spara
-        public async Task<Podcast> GetPodcastPreviewAsync(string url)
+        public Task<Podcast> GetPodcastPreviewAsync(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
-                throw new ArgumentException("URL får inte vara tomt!");
+                throw new ArgumentException("URL får inte vara tom.");
             }
 
-            // Använder RssReader för att bara hämta ner datan (utan att spara i databasen)
-            return await _rssReader.GetPodcastAsync(url, "Förhandsgranskning");
+            return _rssReader.GetPodcastAsync(url.Trim());
         }
 
-        public async Task DeletePodcastAsync(string title)
+        public async Task DeletePodcastAsync(string id)
         {
-            // 1. Hämta alla poddar
-            var allPodcasts = await _podcastRepository.GetAllAsync();
-
-            // 2. Hitta podden med rätt titel
-            var podcastToDelete = System.Linq.Enumerable.FirstOrDefault(allPodcasts, p => p.Title == title);
-
-            if (podcastToDelete != null)
-            {
-                // 3. Skicka ID:t till databasen istället för titeln
-                await _podcastRepository.DeleteAsync(podcastToDelete.Id);
-            }
-            else
-            {
-                throw new Exception("Kunde inte hitta podden i databasen.");
-            }
+            await _podcastRepository.DeleteAsync(id);
         }
 
-        public async Task UpdatePodcastAsync(string oldTitle, string newTitle, string newCategory)
+        public async Task UpdatePodcastAsync(string id, string newTitle, string newCategory)
         {
-            // 1. Hämta alla poddar för att hitta rätt
-            var allPodcasts = await _podcastRepository.GetAllAsync();
-            var podcastToUpdate = System.Linq.Enumerable.FirstOrDefault(allPodcasts, p => p.Title == oldTitle);
+            Podcast podcast = await _podcastRepository.GetByIdAsync(id)
+                ?? throw new EntityNotFoundException("Kunde inte hitta podden som skulle ändras.");
 
-            if (podcastToUpdate != null)
+            if (!string.IsNullOrWhiteSpace(newTitle))
             {
-                // 2. Ändra titeln om användaren skrivit in en ny
-                if (!string.IsNullOrWhiteSpace(newTitle))
-                {
-                    podcastToUpdate.Title = newTitle;
-                }
-
-                // 3. Ändra kategorin om användaren valt en ny
-                if (!string.IsNullOrWhiteSpace(newCategory))
-                {
-                    podcastToUpdate.Category = newCategory;
-                }
-
-                // 4. Spara ändringarna till databasen
-                await _podcastRepository.UpdateAsync(podcastToUpdate);
+                podcast.Title = newTitle.Trim();
             }
-            else
+
+            if (!string.IsNullOrWhiteSpace(newCategory))
             {
-                throw new Exception("Kunde inte hitta podden som skulle ändras.");
+                podcast.Category = newCategory;
             }
+
+            await _podcastRepository.UpdateAsync(podcast);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
@@ -9,44 +10,72 @@ namespace DAL
 {
     public class RssReader : IRssReader
     {
-        public async Task<Podcast> GetPodcastAsync(string url, string categoryName)
+        // En delad HttpClient räcker (att skapa en ny per anrop är ineffektivt)
+        private static readonly HttpClient Client = CreateClient();
+
+        private static HttpClient CreateClient()
         {
-            Podcast newPodcast = new Podcast
+            var client = new HttpClient { Timeout = TimeSpan.FromSeconds(20) };
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("PoddProjektet/1.0");
+            return client;
+        }
+
+        public async Task<Podcast> GetPodcastAsync(string url)
+        {
+            try
             {
-                Url = url, // Id tilldelas oftast när man sparar i databasen, men du kan lägga till Guid.NewGuid().ToString() här om du vill.
-                Category = categoryName,
-                Episodes = new List<Episode>()
+                using Stream stream = await Client.GetStreamAsync(url);
+
+                // Parsningen är synkron, så den körs på en bakgrundstråd för att inte frysa fönstret
+                return await Task.Run(() => ParseFeed(stream, url));
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new FeedException("Kunde inte hämta flödet. Kontrollera adressen och din internetanslutning.", ex);
+            }
+            catch (TaskCanceledException ex)
+            {
+                throw new FeedException("Det tog för lång tid att hämta flödet.", ex);
+            }
+            catch (XmlException ex)
+            {
+                throw new FeedException("Adressen innehåller inget giltigt RSS-flöde.", ex);
+            }
+            catch (Exception ex) when (ex is InvalidOperationException || ex is UriFormatException)
+            {
+                throw new FeedException("Adressen är inte giltig.", ex);
+            }
+        }
+
+        private static Podcast ParseFeed(Stream stream, string url)
+        {
+            var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore };
+            using XmlReader reader = XmlReader.Create(stream, settings);
+            SyndicationFeed feed = SyndicationFeed.Load(reader);
+
+            var podcast = new Podcast
+            {
+                Url = url,
+                Title = feed.Title?.Text ?? "Okänd titel"
             };
 
-            using (HttpClient client = new HttpClient())
+            foreach (SyndicationItem item in feed.Items)
             {
-                // DENNA RAD ÄR NY: Den förklär ditt program till en vanlig webbläsare
-                client.DefaultRequestHeaders.Add("User-Agent", "PoddProjektet/1.0 (Windows NT 10.0; Win64; x64)");
+                string description = item.Summary?.Text
+                    ?? (item.Content as TextSyndicationContent)?.Text
+                    ?? "Ingen beskrivning";
 
-                using (var stream = await client.GetStreamAsync(url))
+                podcast.Episodes.Add(new Episode
                 {
-                    using (XmlReader reader = XmlReader.Create(stream, new XmlReaderSettings { Async = true }))
-                    {
-                        SyndicationFeed feed = SyndicationFeed.Load(reader);
-
-                        // Säkrare hämtning av titel
-                        newPodcast.Title = feed.Title?.Text ?? "Okänd titel";
-
-                        foreach (SyndicationItem item in feed.Items)
-                        {
-                            Episode episode = new Episode
-                            {
-                                Title = item.Title?.Text ?? "Ingen titel",
-                                Description = item.Summary?.Text ?? "Ingen beskrivning",
-                                PublishDate = item.PublishDate.ToString("yyyy-MM-dd")
-                            };
-                            newPodcast.Episodes.Add(episode);
-                        }
-                    }
-                }
+                    Title = item.Title?.Text ?? "Ingen titel",
+                    Description = description,
+                    PublishDate = item.PublishDate == DateTimeOffset.MinValue
+                        ? "Okänt datum"
+                        : item.PublishDate.ToString("yyyy-MM-dd")
+                });
             }
 
-            return newPodcast;
+            return podcast;
         }
     }
 }

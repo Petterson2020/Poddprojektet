@@ -79,7 +79,7 @@
             PoddHanteraren.TabIndex = 0;
             PoddHanteraren.TabStop = false;
             PoddHanteraren.Text = "Hantera Poddar";
-            PoddHanteraren.Enter += groupBox1_Enter;
+
             // 
             // label5
             // 
@@ -191,7 +191,7 @@
             label2.Size = new Size(129, 32);
             label2.TabIndex = 2;
             label2.Text = "Kategorier:";
-            label2.Click += label2_Click;
+
             // 
             // label1
             // 
@@ -202,7 +202,7 @@
             label1.Size = new Size(60, 32);
             label1.TabIndex = 1;
             label1.Text = "URL:";
-            label1.Click += label1_Click;
+
             // 
             // textBox1
             // 
@@ -211,7 +211,7 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(430, 39);
             textBox1.TabIndex = 0;
-            textBox1.TextChanged += textBox1_TextChanged;
+
             // 
             // button3
             // 
@@ -263,7 +263,7 @@
             label3.Size = new Size(142, 32);
             label3.TabIndex = 1;
             label3.Text = "Beskrivning:";
-            label3.Click += label3_Click;
+
             // 
             // listBox2
             // 

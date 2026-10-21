@@ -1,85 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DAL; // Ger oss tillgång till ICategoryRepository och CategoryRepository
-using Models; // Ger oss tillgång till Category
+using DAL;
+using Models;
 
 namespace BL
 {
     public class CategoryController : ICategoryController
     {
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IPodcastRepository _podcastRepository;
 
-        public CategoryController()
+        public CategoryController() : this(new CategoryRepository(), new PodcastRepository()) { }
+
+        public CategoryController(ICategoryRepository categoryRepository, IPodcastRepository podcastRepository)
         {
-            // Initiera kopplingen till DAL när controllern skapas
-            _categoryRepository = new CategoryRepository();
+            _categoryRepository = categoryRepository;
+            _podcastRepository = podcastRepository;
         }
 
         public async Task CreateCategoryAsync(string name)
         {
-            // 1. Affärslogik & Validering
             if (string.IsNullOrWhiteSpace(name))
             {
                 throw new ArgumentException("Kategorinamnet får inte vara tomt.");
             }
 
-            // 2. Skapa modellen
-            Category newCategory = new Category
+            var category = new Category
             {
-                Id = Guid.NewGuid().ToString(), // Ger kategorin ett unikt ID för MongoDB
-                Name = name
+                Id = Guid.NewGuid().ToString(),
+                Name = name.Trim()
             };
 
-            // 3. Spara i databasen via DAL
-            await _categoryRepository.CreateAsync(newCategory);
+            await _categoryRepository.CreateAsync(category);
         }
 
-        public async Task<List<Category>> GetAllCategoriesAsync()
-        {
-            // Skicka bara vidare förfrågan till DAL
-            return await _categoryRepository.GetAllAsync();
-        }
+        public Task<List<Category>> GetAllCategoriesAsync() => _categoryRepository.GetAllAsync();
 
-        // UPPDATERAD: Tar nu emot oldName och newName istället för id
-        public async Task UpdateCategoryAsync(string oldName, string newName)
+        public async Task UpdateCategoryAsync(string id, string newName)
         {
             if (string.IsNullOrWhiteSpace(newName))
             {
                 throw new ArgumentException("Det nya kategorinamnet får inte vara tomt.");
             }
 
-            // 1. Hämta alla kategorier för att hitta den vi vill ändra
-            var allCategories = await _categoryRepository.GetAllAsync();
-            var categoryToUpdate = System.Linq.Enumerable.FirstOrDefault(allCategories, c => c.Name == oldName);
+            Category category = await _categoryRepository.GetByIdAsync(id)
+                ?? throw new EntityNotFoundException("Kunde inte hitta kategorin som skulle ändras.");
 
-            if (categoryToUpdate != null)
-            {
-                // 2. Byt ut namnet till det nya
-                categoryToUpdate.Name = newName;
-
-                // 3. Skicka den uppdaterade kategorin till databasen
-                await _categoryRepository.UpdateAsync(categoryToUpdate);
-            }
-            else
-            {
-                throw new Exception("Kunde inte hitta kategorin som skulle ändras.");
-            }
+            await _categoryRepository.RenameAsync(id, category.Name, newName.Trim());
         }
 
-        public async Task DeleteCategoryAsync(string categoryName)
+        public async Task DeleteCategoryAsync(string id)
         {
-            var allCategories = await _categoryRepository.GetAllAsync();
-            var categoryToDelete = System.Linq.Enumerable.FirstOrDefault(allCategories, c => c.Name == categoryName);
+            Category category = await _categoryRepository.GetByIdAsync(id)
+                ?? throw new EntityNotFoundException("Kunde inte hitta kategorin som skulle tas bort.");
 
-            if (categoryToDelete != null)
+            long count = await _podcastRepository.CountByCategoryAsync(category.Name);
+            if (count > 0)
             {
-                await _categoryRepository.DeleteAsync(categoryToDelete.Id);
+                throw new CategoryInUseException(
+                    $"Kategorin '{category.Name}' används av {count} podd(ar). Ändra kategori på dem eller ta bort dem först.");
             }
-            else
-            {
-                throw new Exception("Kunde inte hitta kategorin i databasen.");
-            }
+
+            await _categoryRepository.DeleteAsync(id);
         }
     }
 }
