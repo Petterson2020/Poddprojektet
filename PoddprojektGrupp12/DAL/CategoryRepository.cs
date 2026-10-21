@@ -28,7 +28,7 @@ namespace DAL
                 await Categories.UpdateOneAsync(session, c => c.Id == id,
                     Builders<Category>.Update.Set(c => c.Name, newName));
 
-                // Håll poddarna i synk med det nya kategorinamnet
+
                 await Podcasts.UpdateManyAsync(session, p => p.Category == oldName,
                     Builders<Podcast>.Update.Set(p => p.Category, newName));
             });

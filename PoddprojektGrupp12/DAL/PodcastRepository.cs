@@ -7,7 +7,6 @@ namespace DAL
 {
     public class PodcastRepository : IPodcastRepository
     {
-        // Hämtas först när den används, så att appen inte kraschar vid start om konfigurationen saknas
         private static IMongoCollection<Podcast> Podcasts =>
             MongoContext.Database.GetCollection<Podcast>("Podcasts");
 

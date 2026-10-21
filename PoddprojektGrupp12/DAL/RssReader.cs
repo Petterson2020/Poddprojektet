@@ -10,7 +10,7 @@ namespace DAL
 {
     public class RssReader : IRssReader
     {
-        // En delad HttpClient räcker (att skapa en ny per anrop är ineffektivt)
+
         private static readonly HttpClient Client = CreateClient();
 
         private static HttpClient CreateClient()
