@@ -2,15 +2,8 @@
 {
     partial class Form1
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -22,380 +15,301 @@
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            PoddHanteraren = new GroupBox();
-            label5 = new Label();
-            button8 = new Button();
-            textBox4 = new TextBox();
-            button7 = new Button();
-            button5 = new Button();
-            button2 = new Button();
-            listBox1 = new ListBox();
-            button1 = new Button();
-            comboBox1 = new ComboBox();
-            label2 = new Label();
-            label1 = new Label();
-            textBox1 = new TextBox();
-            button3 = new Button();
-            groupBox1 = new GroupBox();
-            textBox2 = new TextBox();
-            label3 = new Label();
-            listBox2 = new ListBox();
-            groupBox2 = new GroupBox();
-            button6 = new Button();
-            listBox3 = new ListBox();
-            button4 = new Button();
-            textBox3 = new TextBox();
-            label4 = new Label();
-            PoddHanteraren.SuspendLayout();
-            groupBox1.SuspendLayout();
-            groupBox2.SuspendLayout();
+            grpPodcasts = new GroupBox();
+            lblPodcastName = new Label();
+            btnShowAllPodcasts = new Button();
+            txtPodcastName = new TextBox();
+            btnFetchPodcast = new Button();
+            btnUpdatePodcast = new Button();
+            btnDeletePodcast = new Button();
+            lstPodcasts = new ListBox();
+            btnSavePodcast = new Button();
+            cmbCategory = new ComboBox();
+            lblCategory = new Label();
+            lblUrl = new Label();
+            txtUrl = new TextBox();
+            btnUpdateCategory = new Button();
+            grpEpisodes = new GroupBox();
+            txtEpisodeDescription = new TextBox();
+            lblDescription = new Label();
+            lstEpisodes = new ListBox();
+            grpCategories = new GroupBox();
+            btnDeleteCategory = new Button();
+            lstCategories = new ListBox();
+            btnSaveCategory = new Button();
+            txtCategoryName = new TextBox();
+            lblCategoryName = new Label();
+            grpPodcasts.SuspendLayout();
+            grpEpisodes.SuspendLayout();
+            grpCategories.SuspendLayout();
             SuspendLayout();
-            // 
-            // PoddHanteraren
-            // 
-            PoddHanteraren.Controls.Add(label5);
-            PoddHanteraren.Controls.Add(button8);
-            PoddHanteraren.Controls.Add(textBox4);
-            PoddHanteraren.Controls.Add(button7);
-            PoddHanteraren.Controls.Add(button5);
-            PoddHanteraren.Controls.Add(button2);
-            PoddHanteraren.Controls.Add(listBox1);
-            PoddHanteraren.Controls.Add(button1);
-            PoddHanteraren.Controls.Add(comboBox1);
-            PoddHanteraren.Controls.Add(label2);
-            PoddHanteraren.Controls.Add(label1);
-            PoddHanteraren.Controls.Add(textBox1);
-            PoddHanteraren.Location = new Point(20, 35);
-            PoddHanteraren.Margin = new Padding(5);
-            PoddHanteraren.Name = "PoddHanteraren";
-            PoddHanteraren.Padding = new Padding(5);
-            PoddHanteraren.Size = new Size(791, 1080);
-            PoddHanteraren.TabIndex = 0;
-            PoddHanteraren.TabStop = false;
-            PoddHanteraren.Text = "Hantera Poddar";
+            grpPodcasts.Controls.Add(lblPodcastName);
+            grpPodcasts.Controls.Add(btnShowAllPodcasts);
+            grpPodcasts.Controls.Add(txtPodcastName);
+            grpPodcasts.Controls.Add(btnFetchPodcast);
+            grpPodcasts.Controls.Add(btnUpdatePodcast);
+            grpPodcasts.Controls.Add(btnDeletePodcast);
+            grpPodcasts.Controls.Add(lstPodcasts);
+            grpPodcasts.Controls.Add(btnSavePodcast);
+            grpPodcasts.Controls.Add(cmbCategory);
+            grpPodcasts.Controls.Add(lblCategory);
+            grpPodcasts.Controls.Add(lblUrl);
+            grpPodcasts.Controls.Add(txtUrl);
+            grpPodcasts.Location = new Point(20, 35);
+            grpPodcasts.Margin = new Padding(5);
+            grpPodcasts.Name = "grpPodcasts";
+            grpPodcasts.Padding = new Padding(5);
+            grpPodcasts.Size = new Size(791, 1080);
+            grpPodcasts.TabIndex = 0;
+            grpPodcasts.TabStop = false;
+            grpPodcasts.Text = "Hantera Poddar";
 
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(11, 159);
-            label5.Name = "label5";
-            label5.Size = new Size(84, 32);
-            label5.TabIndex = 10;
-            label5.Text = "Namn:";
-            // 
-            // button8
-            // 
-            button8.Location = new Point(23, 875);
-            button8.Name = "button8";
-            button8.Size = new Size(150, 46);
-            button8.TabIndex = 3;
-            button8.Text = "Visa Alla Poddar";
-            button8.UseVisualStyleBackColor = true;
-            button8.Click += button8_Click;
-            // 
-            // textBox4
-            // 
-            textBox4.Location = new Point(177, 159);
-            textBox4.Name = "textBox4";
-            textBox4.Size = new Size(430, 39);
-            textBox4.TabIndex = 9;
-            // 
-            // button7
-            // 
-            button7.BackColor = SystemColors.ControlLight;
-            button7.FlatStyle = FlatStyle.Flat;
-            button7.Location = new Point(618, 83);
-            button7.Name = "button7";
-            button7.Size = new Size(153, 48);
-            button7.TabIndex = 8;
-            button7.Text = "Hämta";
-            button7.UseVisualStyleBackColor = false;
-            button7.Click += btnHamta_Click;
-            // 
-            // button5
-            // 
-            button5.BackColor = SystemColors.ControlLight;
-            button5.FlatAppearance.MouseDownBackColor = Color.Navy;
-            button5.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
-            button5.FlatStyle = FlatStyle.Flat;
-            button5.Location = new Point(23, 1001);
-            button5.Margin = new Padding(5);
-            button5.Name = "button5";
-            button5.Size = new Size(318, 46);
-            button5.TabIndex = 8;
-            button5.Text = "Ändra Namn/Kategori";
-            button5.UseVisualStyleBackColor = false;
-            button5.Click += button5_Click;
-            // 
-            // button2
-            // 
-            button2.BackColor = SystemColors.ControlLight;
-            button2.FlatAppearance.MouseDownBackColor = Color.Navy;
-            button2.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
-            button2.FlatStyle = FlatStyle.Flat;
-            button2.Location = new Point(372, 1001);
-            button2.Margin = new Padding(5);
-            button2.Name = "button2";
-            button2.Size = new Size(153, 46);
-            button2.TabIndex = 6;
-            button2.Text = "Ta Bort";
-            button2.UseVisualStyleBackColor = false;
-            // 
-            // listBox1
-            // 
-            listBox1.FormattingEnabled = true;
-            listBox1.Location = new Point(23, 307);
-            listBox1.Margin = new Padding(5);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(756, 548);
-            listBox1.TabIndex = 5;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
-            // 
-            // button1
-            // 
-            button1.BackColor = SystemColors.ControlLight;
-            button1.FlatAppearance.MouseDownBackColor = Color.Navy;
-            button1.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.Location = new Point(618, 223);
-            button1.Margin = new Padding(5);
-            button1.Name = "button1";
-            button1.Size = new Size(153, 46);
-            button1.TabIndex = 4;
-            button1.Text = "Spara";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += btnSavePodcast_Click;
-            // 
-            // comboBox1
-            // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(177, 224);
-            comboBox1.Margin = new Padding(5);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(430, 40);
-            comboBox1.TabIndex = 3;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(11, 227);
-            label2.Margin = new Padding(5, 0, 5, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(129, 32);
-            label2.TabIndex = 2;
-            label2.Text = "Kategorier:";
+            lblPodcastName.AutoSize = true;
+            lblPodcastName.Location = new Point(11, 159);
+            lblPodcastName.Name = "lblPodcastName";
+            lblPodcastName.Size = new Size(84, 32);
+            lblPodcastName.TabIndex = 10;
+            lblPodcastName.Text = "Namn:";
+            btnShowAllPodcasts.Location = new Point(23, 875);
+            btnShowAllPodcasts.Name = "btnShowAllPodcasts";
+            btnShowAllPodcasts.Size = new Size(150, 46);
+            btnShowAllPodcasts.TabIndex = 3;
+            btnShowAllPodcasts.Text = "Visa Alla Poddar";
+            btnShowAllPodcasts.UseVisualStyleBackColor = true;
+            btnShowAllPodcasts.Click += btnShowAllPodcasts_Click;
+            txtPodcastName.Location = new Point(177, 159);
+            txtPodcastName.Name = "txtPodcastName";
+            txtPodcastName.Size = new Size(430, 39);
+            txtPodcastName.TabIndex = 9;
+            btnFetchPodcast.BackColor = SystemColors.ControlLight;
+            btnFetchPodcast.FlatStyle = FlatStyle.Flat;
+            btnFetchPodcast.Location = new Point(618, 83);
+            btnFetchPodcast.Name = "btnFetchPodcast";
+            btnFetchPodcast.Size = new Size(153, 48);
+            btnFetchPodcast.TabIndex = 8;
+            btnFetchPodcast.Text = "Hämta";
+            btnFetchPodcast.UseVisualStyleBackColor = false;
+            btnFetchPodcast.Click += btnFetchPodcast_Click;
+            btnUpdatePodcast.BackColor = SystemColors.ControlLight;
+            btnUpdatePodcast.FlatAppearance.MouseDownBackColor = Color.Navy;
+            btnUpdatePodcast.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
+            btnUpdatePodcast.FlatStyle = FlatStyle.Flat;
+            btnUpdatePodcast.Location = new Point(23, 1001);
+            btnUpdatePodcast.Margin = new Padding(5);
+            btnUpdatePodcast.Name = "btnUpdatePodcast";
+            btnUpdatePodcast.Size = new Size(318, 46);
+            btnUpdatePodcast.TabIndex = 8;
+            btnUpdatePodcast.Text = "Ändra Namn/Kategori";
+            btnUpdatePodcast.UseVisualStyleBackColor = false;
+            btnUpdatePodcast.Click += btnUpdatePodcast_Click;
+            btnDeletePodcast.BackColor = SystemColors.ControlLight;
+            btnDeletePodcast.FlatAppearance.MouseDownBackColor = Color.Navy;
+            btnDeletePodcast.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
+            btnDeletePodcast.FlatStyle = FlatStyle.Flat;
+            btnDeletePodcast.Location = new Point(372, 1001);
+            btnDeletePodcast.Margin = new Padding(5);
+            btnDeletePodcast.Name = "btnDeletePodcast";
+            btnDeletePodcast.Size = new Size(153, 46);
+            btnDeletePodcast.TabIndex = 6;
+            btnDeletePodcast.Text = "Ta Bort";
+            btnDeletePodcast.UseVisualStyleBackColor = false;
+            btnDeletePodcast.Click += btnDeletePodcast_Click;
+            lstPodcasts.FormattingEnabled = true;
+            lstPodcasts.Location = new Point(23, 307);
+            lstPodcasts.Margin = new Padding(5);
+            lstPodcasts.Name = "lstPodcasts";
+            lstPodcasts.Size = new Size(756, 548);
+            lstPodcasts.TabIndex = 5;
+            lstPodcasts.SelectedIndexChanged += lstPodcasts_SelectedIndexChanged;
+            btnSavePodcast.BackColor = SystemColors.ControlLight;
+            btnSavePodcast.FlatAppearance.MouseDownBackColor = Color.Navy;
+            btnSavePodcast.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
+            btnSavePodcast.FlatStyle = FlatStyle.Flat;
+            btnSavePodcast.Location = new Point(618, 223);
+            btnSavePodcast.Margin = new Padding(5);
+            btnSavePodcast.Name = "btnSavePodcast";
+            btnSavePodcast.Size = new Size(153, 46);
+            btnSavePodcast.TabIndex = 4;
+            btnSavePodcast.Text = "Spara";
+            btnSavePodcast.UseVisualStyleBackColor = false;
+            btnSavePodcast.Click += btnSavePodcast_Click;
+            cmbCategory.FormattingEnabled = true;
+            cmbCategory.Location = new Point(177, 224);
+            cmbCategory.Margin = new Padding(5);
+            cmbCategory.Name = "cmbCategory";
+            cmbCategory.Size = new Size(430, 40);
+            cmbCategory.TabIndex = 3;
+            lblCategory.AutoSize = true;
+            lblCategory.Location = new Point(11, 227);
+            lblCategory.Margin = new Padding(5, 0, 5, 0);
+            lblCategory.Name = "lblCategory";
+            lblCategory.Size = new Size(129, 32);
+            lblCategory.TabIndex = 2;
+            lblCategory.Text = "Kategorier:";
 
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(11, 98);
-            label1.Margin = new Padding(5, 0, 5, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(60, 32);
-            label1.TabIndex = 1;
-            label1.Text = "URL:";
+            lblUrl.AutoSize = true;
+            lblUrl.Location = new Point(11, 98);
+            lblUrl.Margin = new Padding(5, 0, 5, 0);
+            lblUrl.Name = "lblUrl";
+            lblUrl.Size = new Size(60, 32);
+            lblUrl.TabIndex = 1;
+            lblUrl.Text = "URL:";
 
-            // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(177, 86);
-            textBox1.Margin = new Padding(5);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(430, 39);
-            textBox1.TabIndex = 0;
+            txtUrl.Location = new Point(177, 86);
+            txtUrl.Margin = new Padding(5);
+            txtUrl.Name = "txtUrl";
+            txtUrl.Size = new Size(430, 39);
+            txtUrl.TabIndex = 0;
 
-            // 
-            // button3
-            // 
-            button3.BackColor = SystemColors.ControlLight;
-            button3.FlatAppearance.MouseDownBackColor = Color.Navy;
-            button3.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
-            button3.FlatStyle = FlatStyle.Flat;
-            button3.Location = new Point(250, 398);
-            button3.Margin = new Padding(5);
-            button3.Name = "button3";
-            button3.Size = new Size(153, 46);
-            button3.TabIndex = 7;
-            button3.Text = "Ändra";
-            button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
-            // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(textBox2);
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(listBox2);
-            groupBox1.Location = new Point(852, 37);
-            groupBox1.Margin = new Padding(5);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Padding = new Padding(5);
-            groupBox1.Size = new Size(614, 592);
-            groupBox1.TabIndex = 1;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Avsnitt";
-            // 
-            // textBox2
-            // 
-            textBox2.Location = new Point(15, 288);
-            textBox2.Margin = new Padding(5);
-            textBox2.Multiline = true;
-            textBox2.Name = "textBox2";
-            textBox2.ReadOnly = true;
-            textBox2.ScrollBars = ScrollBars.Vertical;
-            textBox2.Size = new Size(587, 262);
-            textBox2.TabIndex = 2;
-            textBox2.TextChanged += listBox2_SelectedIndexChanged;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(15, 235);
-            label3.Margin = new Padding(5, 0, 5, 0);
-            label3.Name = "label3";
-            label3.Size = new Size(142, 32);
-            label3.TabIndex = 1;
-            label3.Text = "Beskrivning:";
+            btnUpdateCategory.BackColor = SystemColors.ControlLight;
+            btnUpdateCategory.FlatAppearance.MouseDownBackColor = Color.Navy;
+            btnUpdateCategory.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
+            btnUpdateCategory.FlatStyle = FlatStyle.Flat;
+            btnUpdateCategory.Location = new Point(250, 398);
+            btnUpdateCategory.Margin = new Padding(5);
+            btnUpdateCategory.Name = "btnUpdateCategory";
+            btnUpdateCategory.Size = new Size(153, 46);
+            btnUpdateCategory.TabIndex = 7;
+            btnUpdateCategory.Text = "Ändra";
+            btnUpdateCategory.UseVisualStyleBackColor = false;
+            btnUpdateCategory.Click += btnUpdateCategory_Click;
+            grpEpisodes.Controls.Add(txtEpisodeDescription);
+            grpEpisodes.Controls.Add(lblDescription);
+            grpEpisodes.Controls.Add(lstEpisodes);
+            grpEpisodes.Location = new Point(852, 37);
+            grpEpisodes.Margin = new Padding(5);
+            grpEpisodes.Name = "grpEpisodes";
+            grpEpisodes.Padding = new Padding(5);
+            grpEpisodes.Size = new Size(614, 592);
+            grpEpisodes.TabIndex = 1;
+            grpEpisodes.TabStop = false;
+            grpEpisodes.Text = "Avsnitt";
+            txtEpisodeDescription.Location = new Point(15, 288);
+            txtEpisodeDescription.Margin = new Padding(5);
+            txtEpisodeDescription.Multiline = true;
+            txtEpisodeDescription.Name = "txtEpisodeDescription";
+            txtEpisodeDescription.ReadOnly = true;
+            txtEpisodeDescription.ScrollBars = ScrollBars.Vertical;
+            txtEpisodeDescription.Size = new Size(587, 262);
+            txtEpisodeDescription.TabIndex = 2;
+            lblDescription.AutoSize = true;
+            lblDescription.Location = new Point(15, 235);
+            lblDescription.Margin = new Padding(5, 0, 5, 0);
+            lblDescription.Name = "lblDescription";
+            lblDescription.Size = new Size(142, 32);
+            lblDescription.TabIndex = 1;
+            lblDescription.Text = "Beskrivning:";
 
-            // 
-            // listBox2
-            // 
-            listBox2.FormattingEnabled = true;
-            listBox2.Location = new Point(15, 54);
-            listBox2.Margin = new Padding(5);
-            listBox2.Name = "listBox2";
-            listBox2.Size = new Size(587, 164);
-            listBox2.TabIndex = 0;
-            listBox2.SelectedIndexChanged += listBox2_SelectedIndexChanged;
-            // 
-            // groupBox2
-            // 
-            groupBox2.Controls.Add(button6);
-            groupBox2.Controls.Add(listBox3);
-            groupBox2.Controls.Add(button3);
-            groupBox2.Controls.Add(button4);
-            groupBox2.Controls.Add(textBox3);
-            groupBox2.Controls.Add(label4);
-            groupBox2.Location = new Point(847, 638);
-            groupBox2.Margin = new Padding(5);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Padding = new Padding(5);
-            groupBox2.Size = new Size(609, 477);
-            groupBox2.TabIndex = 2;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Kategorier";
-            // 
-            // button6
-            // 
-            button6.BackColor = SystemColors.ControlLight;
-            button6.FlatAppearance.MouseDownBackColor = Color.Navy;
-            button6.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
-            button6.FlatStyle = FlatStyle.Flat;
-            button6.Location = new Point(437, 398);
-            button6.Margin = new Padding(5);
-            button6.Name = "button6";
-            button6.Size = new Size(153, 46);
-            button6.TabIndex = 9;
-            button6.Text = "Ta Bort";
-            button6.UseVisualStyleBackColor = false;
-            button6.Click += button6_Click;
-            // 
-            // listBox3
-            // 
-            listBox3.FormattingEnabled = true;
-            listBox3.Location = new Point(29, 104);
-            listBox3.Margin = new Padding(5);
-            listBox3.Name = "listBox3";
-            listBox3.Size = new Size(558, 260);
-            listBox3.TabIndex = 3;
-            listBox3.SelectedIndexChanged += listBox3_SelectedIndexChanged;
-            // 
-            // button4
-            // 
-            button4.BackColor = SystemColors.ControlLight;
-            button4.FlatAppearance.MouseDownBackColor = Color.Navy;
-            button4.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
-            button4.FlatStyle = FlatStyle.Flat;
-            button4.Location = new Point(437, 48);
-            button4.Margin = new Padding(5);
-            button4.Name = "button4";
-            button4.Size = new Size(153, 46);
-            button4.TabIndex = 2;
-            button4.Text = "Spara";
-            button4.UseVisualStyleBackColor = false;
-            button4.Click += btnSaveCategory_Click;
-            // 
-            // textBox3
-            // 
-            textBox3.Location = new Point(124, 48);
-            textBox3.Margin = new Padding(5);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(301, 39);
-            textBox3.TabIndex = 1;
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(10, 53);
-            label4.Margin = new Padding(5, 0, 5, 0);
-            label4.Name = "label4";
-            label4.Size = new Size(84, 32);
-            label4.TabIndex = 0;
-            label4.Text = "Namn:";
-            // 
-            // Form1
-            // 
+            lstEpisodes.FormattingEnabled = true;
+            lstEpisodes.Location = new Point(15, 54);
+            lstEpisodes.Margin = new Padding(5);
+            lstEpisodes.Name = "lstEpisodes";
+            lstEpisodes.Size = new Size(587, 164);
+            lstEpisodes.TabIndex = 0;
+            lstEpisodes.SelectedIndexChanged += lstEpisodes_SelectedIndexChanged;
+            grpCategories.Controls.Add(btnDeleteCategory);
+            grpCategories.Controls.Add(lstCategories);
+            grpCategories.Controls.Add(btnUpdateCategory);
+            grpCategories.Controls.Add(btnSaveCategory);
+            grpCategories.Controls.Add(txtCategoryName);
+            grpCategories.Controls.Add(lblCategoryName);
+            grpCategories.Location = new Point(847, 638);
+            grpCategories.Margin = new Padding(5);
+            grpCategories.Name = "grpCategories";
+            grpCategories.Padding = new Padding(5);
+            grpCategories.Size = new Size(609, 477);
+            grpCategories.TabIndex = 2;
+            grpCategories.TabStop = false;
+            grpCategories.Text = "Kategorier";
+            btnDeleteCategory.BackColor = SystemColors.ControlLight;
+            btnDeleteCategory.FlatAppearance.MouseDownBackColor = Color.Navy;
+            btnDeleteCategory.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
+            btnDeleteCategory.FlatStyle = FlatStyle.Flat;
+            btnDeleteCategory.Location = new Point(437, 398);
+            btnDeleteCategory.Margin = new Padding(5);
+            btnDeleteCategory.Name = "btnDeleteCategory";
+            btnDeleteCategory.Size = new Size(153, 46);
+            btnDeleteCategory.TabIndex = 9;
+            btnDeleteCategory.Text = "Ta Bort";
+            btnDeleteCategory.UseVisualStyleBackColor = false;
+            btnDeleteCategory.Click += btnDeleteCategory_Click;
+            lstCategories.FormattingEnabled = true;
+            lstCategories.Location = new Point(29, 104);
+            lstCategories.Margin = new Padding(5);
+            lstCategories.Name = "lstCategories";
+            lstCategories.Size = new Size(558, 260);
+            lstCategories.TabIndex = 3;
+            lstCategories.SelectedIndexChanged += lstCategories_SelectedIndexChanged;
+            btnSaveCategory.BackColor = SystemColors.ControlLight;
+            btnSaveCategory.FlatAppearance.MouseDownBackColor = Color.Navy;
+            btnSaveCategory.FlatAppearance.MouseOverBackColor = Color.FromArgb(0, 0, 192);
+            btnSaveCategory.FlatStyle = FlatStyle.Flat;
+            btnSaveCategory.Location = new Point(437, 48);
+            btnSaveCategory.Margin = new Padding(5);
+            btnSaveCategory.Name = "btnSaveCategory";
+            btnSaveCategory.Size = new Size(153, 46);
+            btnSaveCategory.TabIndex = 2;
+            btnSaveCategory.Text = "Spara";
+            btnSaveCategory.UseVisualStyleBackColor = false;
+            btnSaveCategory.Click += btnSaveCategory_Click;
+            txtCategoryName.Location = new Point(124, 48);
+            txtCategoryName.Margin = new Padding(5);
+            txtCategoryName.Name = "txtCategoryName";
+            txtCategoryName.Size = new Size(301, 39);
+            txtCategoryName.TabIndex = 1;
+            lblCategoryName.AutoSize = true;
+            lblCategoryName.Location = new Point(10, 53);
+            lblCategoryName.Margin = new Padding(5, 0, 5, 0);
+            lblCategoryName.Name = "lblCategoryName";
+            lblCategoryName.Size = new Size(84, 32);
+            lblCategoryName.TabIndex = 0;
+            lblCategoryName.Text = "Namn:";
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1736, 1155);
-            Controls.Add(groupBox2);
-            Controls.Add(groupBox1);
-            Controls.Add(PoddHanteraren);
+            Controls.Add(grpCategories);
+            Controls.Add(grpEpisodes);
+            Controls.Add(grpPodcasts);
             Margin = new Padding(5);
             Name = "Form1";
             Text = "Poddhanteraren";
             Load += Form1_Load;
-            PoddHanteraren.ResumeLayout(false);
-            PoddHanteraren.PerformLayout();
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
+            grpPodcasts.ResumeLayout(false);
+            grpPodcasts.PerformLayout();
+            grpEpisodes.ResumeLayout(false);
+            grpEpisodes.PerformLayout();
+            grpCategories.ResumeLayout(false);
+            grpCategories.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private GroupBox PoddHanteraren;
-        private TextBox textBox1;
-        private Label label1;
-        private Label label2;
-        private Button button3;
-        private Button button2;
-        private ListBox listBox1;
-        private Button button1;
-        private ComboBox comboBox1;
-        private GroupBox groupBox1;
-        private GroupBox groupBox2;
-        private Label label3;
-        private ListBox listBox2;
-        private TextBox textBox2;
-        private ListBox listBox3;
-        private Button button4;
-        private TextBox textBox3;
-        private Label label4;
-        private Button button6;
-        private Button button5;
-        private Button button7;
-        private TextBox textBox4;
-        private Button button8;
-        private Label label5;
+        private GroupBox grpPodcasts;
+        private TextBox txtUrl;
+        private Label lblUrl;
+        private Label lblCategory;
+        private Button btnUpdateCategory;
+        private Button btnDeletePodcast;
+        private ListBox lstPodcasts;
+        private Button btnSavePodcast;
+        private ComboBox cmbCategory;
+        private GroupBox grpEpisodes;
+        private GroupBox grpCategories;
+        private Label lblDescription;
+        private ListBox lstEpisodes;
+        private TextBox txtEpisodeDescription;
+        private ListBox lstCategories;
+        private Button btnSaveCategory;
+        private TextBox txtCategoryName;
+        private Label lblCategoryName;
+        private Button btnDeleteCategory;
+        private Button btnUpdatePodcast;
+        private Button btnFetchPodcast;
+        private TextBox txtPodcastName;
+        private Button btnShowAllPodcasts;
+        private Label lblPodcastName;
     }
 }

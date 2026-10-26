@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using DAL;
+﻿using DAL;
 using Models;
 
 namespace BL
@@ -11,10 +8,8 @@ namespace BL
         private readonly IPodcastRepository _podcastRepository;
         private readonly IRssReader _rssReader;
 
-        // Standardkonstruktor så att PL inte behöver känna till DAL
         public PodcastController() : this(new PodcastRepository(), new RssReader()) { }
 
-        // Konstruktor där beroenden skickas in (lättare att byta ut/testa)
         public PodcastController(IPodcastRepository podcastRepository, IRssReader rssReader)
         {
             _podcastRepository = podcastRepository;

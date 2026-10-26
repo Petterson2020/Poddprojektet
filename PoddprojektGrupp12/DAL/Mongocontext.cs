@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 
 namespace DAL
 {
@@ -8,7 +6,7 @@ namespace DAL
     {
         private const string ConnectionString = "mongodb+srv://simonpetterson20_db_user:Petterson20@orumongodb.fud0i2g.mongodb.net/?appName=OruMongoDB";
 
-        private const string DatabaseName = "PoddAppDB";
+        private const string DatabaseName = "opponering";
 
         private static MongoClient? _client;
 
@@ -28,7 +26,7 @@ namespace DAL
             catch
             {
                 try { await session.AbortTransactionAsync(); }
-                catch { /* ignorera, vi vill kasta det ursprungliga felet */ }
+                catch { }
                 throw;
             }
         }

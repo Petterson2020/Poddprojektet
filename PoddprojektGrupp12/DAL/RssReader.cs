@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Net.Http;
-using System.ServiceModel.Syndication;
-using System.Threading.Tasks;
+﻿using System.ServiceModel.Syndication;
 using System.Xml;
 using Models;
 
@@ -10,7 +6,6 @@ namespace DAL
 {
     public class RssReader : IRssReader
     {
-
         private static readonly HttpClient Client = CreateClient();
 
         private static HttpClient CreateClient()
@@ -24,10 +19,9 @@ namespace DAL
         {
             try
             {
-                using Stream stream = await Client.GetStreamAsync(url);
+                string xml = await Client.GetStringAsync(url);
 
-                // Parsningen är synkron, så den körs på en bakgrundstråd för att inte frysa fönstret
-                return await Task.Run(() => ParseFeed(stream, url));
+                return ParseFeed(xml, url);
             }
             catch (HttpRequestException ex)
             {
@@ -47,10 +41,11 @@ namespace DAL
             }
         }
 
-        private static Podcast ParseFeed(Stream stream, string url)
+        private static Podcast ParseFeed(string xml, string url)
         {
             var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Ignore };
-            using XmlReader reader = XmlReader.Create(stream, settings);
+            using var stringReader = new StringReader(xml);
+            using XmlReader reader = XmlReader.Create(stringReader, settings);
             SyndicationFeed feed = SyndicationFeed.Load(reader);
 
             var podcast = new Podcast

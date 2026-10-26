@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Models;
+﻿using Models;
 
 namespace BL
 {
@@ -8,7 +6,6 @@ namespace BL
     {
         Task AddPodcastAsync(string url, string categoryName, string customTitle = "");
         Task<List<Podcast>> GetAllPodcastsAsync();
-
 
         Task<Podcast> GetPodcastPreviewAsync(string url);
 

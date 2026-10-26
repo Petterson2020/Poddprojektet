@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Models;
+﻿using Models;
 using MongoDB.Driver;
 
 namespace DAL
@@ -28,13 +26,17 @@ namespace DAL
                 await Categories.UpdateOneAsync(session, c => c.Id == id,
                     Builders<Category>.Update.Set(c => c.Name, newName));
 
-
                 await Podcasts.UpdateManyAsync(session, p => p.Category == oldName,
                     Builders<Podcast>.Update.Set(p => p.Category, newName));
             });
 
-        public Task DeleteAsync(string id) =>
-            MongoContext.RunInTransactionAsync(session =>
-                Categories.DeleteOneAsync(session, c => c.Id == id));
+        public Task DeleteAsync(string id, string name) =>
+            MongoContext.RunInTransactionAsync(async session =>
+            {
+                await Categories.DeleteOneAsync(session, c => c.Id == id);
+
+                await Podcasts.UpdateManyAsync(session, p => p.Category == name,
+                    Builders<Podcast>.Update.Set(p => p.Category, string.Empty));
+            });
     }
 }

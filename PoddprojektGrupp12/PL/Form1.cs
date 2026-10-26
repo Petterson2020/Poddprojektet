@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using BL;
 using Models;
 
@@ -15,7 +10,6 @@ namespace PL
         private readonly IPodcastController _podcastController;
         private readonly ICategoryController _categoryController;
 
-        // Cache så att vi inte hämtar allt från databasen vid varje klick
         private List<Podcast> _podcasts = new();
         private List<Category> _categories = new();
 
@@ -25,22 +19,17 @@ namespace PL
             _podcastController = new PodcastController();
             _categoryController = new CategoryController();
 
-            // Listorna innehåller riktiga objekt (med Id) men visar bara titel/namn
-            listBox1.DisplayMember = nameof(Podcast.Title);
-            listBox2.DisplayMember = nameof(Episode.Title);
-            listBox3.DisplayMember = nameof(Category.Name);
-            comboBox1.DisplayMember = nameof(Category.Name);
+            lstPodcasts.DisplayMember = nameof(Podcast.Title);
+            lstEpisodes.DisplayMember = nameof(Episode.Title);
+            lstCategories.DisplayMember = nameof(Category.Name);
+            cmbCategory.DisplayMember = nameof(Category.Name);
         }
-
-        // ---------- Start ----------
 
         private async void Form1_Load(object? sender, EventArgs e)
         {
             await LoadCategoriesAsync();
             await LoadPodcastsAsync();
         }
-
-        // ---------- Hjälpmetoder: laddning och visning ----------
 
         private async Task LoadCategoriesAsync()
         {
@@ -49,12 +38,12 @@ namespace PL
                 _categories = (await _categoryController.GetAllCategoriesAsync())
                     .OrderBy(c => c.Name).ToList();
 
-                listBox3.Items.Clear();
-                comboBox1.Items.Clear();
+                lstCategories.Items.Clear();
+                cmbCategory.Items.Clear();
                 foreach (Category category in _categories)
                 {
-                    listBox3.Items.Add(category);
-                    comboBox1.Items.Add(category);
+                    lstCategories.Items.Add(category);
+                    cmbCategory.Items.Add(category);
                 }
             }
             catch (Exception ex)
@@ -63,13 +52,12 @@ namespace PL
             }
         }
 
-        // Laddar om ALLA poddar från databasen och nollställer filter/avsnittsvy
         private async Task LoadPodcastsAsync()
         {
             try
             {
                 _podcasts = await _podcastController.GetAllPodcastsAsync();
-                listBox3.ClearSelected();
+                lstCategories.ClearSelected();
                 ShowPodcasts(_podcasts);
                 ClearEpisodeView();
             }
@@ -81,38 +69,43 @@ namespace PL
 
         private void ShowPodcasts(IEnumerable<Podcast> podcasts)
         {
-            listBox1.Items.Clear();
+            lstPodcasts.Items.Clear();
             foreach (Podcast podcast in podcasts.OrderBy(p => p.Title))
             {
-                listBox1.Items.Add(podcast);
+                lstPodcasts.Items.Add(podcast);
             }
         }
 
         private void ShowEpisodes(Podcast podcast)
         {
-            listBox2.Items.Clear();
-            textBox2.Clear();
+            lstEpisodes.Items.Clear();
+            txtEpisodeDescription.Clear();
             foreach (Episode episode in podcast.Episodes)
             {
-                listBox2.Items.Add(episode);
+                lstEpisodes.Items.Add(episode);
             }
-            groupBox1.Text = $"Avsnitt ({podcast.Episodes.Count} st)";
+            grpEpisodes.Text = $"Avsnitt ({podcast.Episodes.Count} st)";
         }
 
         private void ClearEpisodeView()
         {
-            listBox2.Items.Clear();
-            textBox2.Clear();
-            groupBox1.Text = "Avsnitt";
+            lstEpisodes.Items.Clear();
+            txtEpisodeDescription.Clear();
+            grpEpisodes.Text = "Avsnitt";
         }
-
-        // ---------- Hjälpmetoder: validering och meddelanden ----------
 
         private static bool TryGetFeedUrl(string input, out string url)
         {
             url = input.Trim();
-            return Uri.TryCreate(url, UriKind.Absolute, out Uri? uri)
+            bool isValid = Uri.TryCreate(url, UriKind.Absolute, out Uri? uri)
                 && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+
+            if (!isValid)
+            {
+                MessageBox.Show("Ange en giltig webbadress som börjar med http:// eller https://.");
+            }
+
+            return isValid;
         }
 
         private static bool SameUrl(string? a, string? b) =>
@@ -124,28 +117,23 @@ namespace PL
 
         private static void ShowError(string message, Exception ex)
         {
-            // Våra egna fel har användarvänliga meddelanden, övriga är oväntade
             string details = ex is PodcastAppException ? ex.Message : "Oväntat fel: " + ex.Message;
             MessageBox.Show(message + Environment.NewLine + details, "Fel",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        // ---------- Poddar ----------
-
-        // Hämta-knappen: förhandsgranska flödet utan att spara
-        private async void btnHamta_Click(object? sender, EventArgs e)
+        private async void btnFetchPodcast_Click(object? sender, EventArgs e)
         {
-            if (!TryGetFeedUrl(textBox1.Text, out string url))
+            if (!TryGetFeedUrl(txtUrl.Text, out string url))
             {
-                MessageBox.Show("Ange en giltig webbadress som börjar med http:// eller https://.");
                 return;
             }
 
-            button7.Enabled = false;
+            btnFetchPodcast.Enabled = false;
             try
             {
                 Podcast preview = await _podcastController.GetPodcastPreviewAsync(url);
-                listBox1.ClearSelected();
+                lstPodcasts.ClearSelected();
                 ShowEpisodes(preview);
             }
             catch (Exception ex)
@@ -154,20 +142,18 @@ namespace PL
             }
             finally
             {
-                button7.Enabled = true;
+                btnFetchPodcast.Enabled = true;
             }
         }
 
-        // Spara podd
         private async void btnSavePodcast_Click(object? sender, EventArgs e)
         {
-            if (!TryGetFeedUrl(textBox1.Text, out string url))
+            if (!TryGetFeedUrl(txtUrl.Text, out string url))
             {
-                MessageBox.Show("Ange en giltig webbadress som börjar med http:// eller https://.");
                 return;
             }
 
-            if (comboBox1.SelectedItem is not Category category)
+            if (cmbCategory.SelectedItem is not Category category)
             {
                 MessageBox.Show("Välj en kategori.");
                 return;
@@ -179,13 +165,13 @@ namespace PL
                 return;
             }
 
-            button1.Enabled = false;
+            btnSavePodcast.Enabled = false;
             try
             {
-                await _podcastController.AddPodcastAsync(url, category.Name, textBox4.Text.Trim());
-                textBox1.Clear();
-                textBox4.Clear();
-                comboBox1.SelectedIndex = -1;
+                await _podcastController.AddPodcastAsync(url, category.Name, txtPodcastName.Text.Trim());
+                txtUrl.Clear();
+                txtPodcastName.Clear();
+                cmbCategory.SelectedIndex = -1;
                 await LoadPodcastsAsync();
                 MessageBox.Show("Podden har lagts till!");
             }
@@ -195,34 +181,31 @@ namespace PL
             }
             finally
             {
-                button1.Enabled = true;
+                btnSavePodcast.Enabled = true;
             }
         }
 
-        // Välj podd i listan -> visa dess avsnitt
-        private void listBox1_SelectedIndexChanged(object? sender, EventArgs e)
+        private void lstPodcasts_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            if (listBox1.SelectedItem is Podcast podcast)
+            if (lstPodcasts.SelectedItem is Podcast podcast)
             {
                 ShowEpisodes(podcast);
             }
         }
 
-        // Välj avsnitt -> visa publiceringsdatum och beskrivning
-        private void listBox2_SelectedIndexChanged(object? sender, EventArgs e)
+        private void lstEpisodes_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            if (listBox2.SelectedItem is not Episode episode)
+            if (lstEpisodes.SelectedItem is not Episode episode)
             {
                 return;
             }
 
             try
             {
-                // Tvätta bort HTML-taggar och avkoda t.ex. &amp;
                 string description = Regex.Replace(episode.Description ?? "", "<.*?>", string.Empty);
                 description = WebUtility.HtmlDecode(description);
 
-                textBox2.Text = $"Publicerades: {episode.PublishDate}   |   Antal avsnitt i podden: {listBox2.Items.Count} st"
+                txtEpisodeDescription.Text = $"Publicerades: {episode.PublishDate}   |   Antal avsnitt i podden: {lstEpisodes.Items.Count} st"
                     + Environment.NewLine + Environment.NewLine + description;
             }
             catch (Exception ex)
@@ -231,17 +214,16 @@ namespace PL
             }
         }
 
-        // Ändra namn/kategori på vald podd
-        private async void button5_Click(object? sender, EventArgs e)
+        private async void btnUpdatePodcast_Click(object? sender, EventArgs e)
         {
-            if (listBox1.SelectedItem is not Podcast podcast)
+            if (lstPodcasts.SelectedItem is not Podcast podcast)
             {
                 MessageBox.Show("Du måste markera en podd i listan för att kunna ändra den.");
                 return;
             }
 
-            string newTitle = textBox4.Text.Trim();
-            string newCategory = (comboBox1.SelectedItem as Category)?.Name ?? "";
+            string newTitle = txtPodcastName.Text.Trim();
+            string newCategory = (cmbCategory.SelectedItem as Category)?.Name ?? "";
 
             if (newTitle == "" && newCategory == "")
             {
@@ -252,8 +234,8 @@ namespace PL
             try
             {
                 await _podcastController.UpdatePodcastAsync(podcast.Id, newTitle, newCategory);
-                textBox4.Clear();
-                comboBox1.SelectedIndex = -1;
+                txtPodcastName.Clear();
+                cmbCategory.SelectedIndex = -1;
                 await LoadPodcastsAsync();
                 MessageBox.Show("Podden har uppdaterats!");
             }
@@ -263,10 +245,9 @@ namespace PL
             }
         }
 
-        // Ta bort podd
-        private async void button2_Click(object? sender, EventArgs e)
+        private async void btnDeletePodcast_Click(object? sender, EventArgs e)
         {
-            if (listBox1.SelectedItem is not Podcast podcast)
+            if (lstPodcasts.SelectedItem is not Podcast podcast)
             {
                 MessageBox.Show("Du måste markera en podd i listan för att kunna ta bort den.");
                 return;
@@ -288,19 +269,15 @@ namespace PL
             }
         }
 
-        // Visa alla poddar (tar bort kategorifiltret)
-        private async void button8_Click(object? sender, EventArgs e)
+        private async void btnShowAllPodcasts_Click(object? sender, EventArgs e)
         {
-            textBox3.Clear();
+            txtCategoryName.Clear();
             await LoadPodcastsAsync();
         }
 
-        // ---------- Kategorier ----------
-
-        // Spara ny kategori
         private async void btnSaveCategory_Click(object? sender, EventArgs e)
         {
-            string name = textBox3.Text.Trim();
+            string name = txtCategoryName.Text.Trim();
 
             if (name == "")
             {
@@ -317,7 +294,7 @@ namespace PL
             try
             {
                 await _categoryController.CreateCategoryAsync(name);
-                textBox3.Clear();
+                txtCategoryName.Clear();
                 await LoadCategoriesAsync();
             }
             catch (Exception ex)
@@ -326,29 +303,27 @@ namespace PL
             }
         }
 
-        // Välj kategori -> fyll i namnrutan och filtrera poddlistan
-        private void listBox3_SelectedIndexChanged(object? sender, EventArgs e)
+        private void lstCategories_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            if (listBox3.SelectedItem is not Category category)
+            if (lstCategories.SelectedItem is not Category category)
             {
                 return;
             }
 
-            textBox3.Text = category.Name;
+            txtCategoryName.Text = category.Name;
             ShowPodcasts(_podcasts.Where(p => p.Category == category.Name));
             ClearEpisodeView();
         }
 
-        // Ändra kategorinamn
-        private async void button3_Click(object? sender, EventArgs e)
+        private async void btnUpdateCategory_Click(object? sender, EventArgs e)
         {
-            if (listBox3.SelectedItem is not Category category)
+            if (lstCategories.SelectedItem is not Category category)
             {
                 MessageBox.Show("Välj en kategori i listan som du vill ändra.");
                 return;
             }
 
-            string newName = textBox3.Text.Trim();
+            string newName = txtCategoryName.Text.Trim();
 
             if (newName == "")
             {
@@ -366,9 +341,9 @@ namespace PL
             try
             {
                 await _categoryController.UpdateCategoryAsync(category.Id, newName);
-                textBox3.Clear();
+                txtCategoryName.Clear();
                 await LoadCategoriesAsync();
-                await LoadPodcastsAsync(); // poddarnas kategorinamn har också ändrats
+                await LoadPodcastsAsync();
             }
             catch (Exception ex)
             {
@@ -376,16 +351,22 @@ namespace PL
             }
         }
 
-        // Ta bort kategori
-        private async void button6_Click(object? sender, EventArgs e)
+        private async void btnDeleteCategory_Click(object? sender, EventArgs e)
         {
-            if (listBox3.SelectedItem is not Category category)
+            if (lstCategories.SelectedItem is not Category category)
             {
                 MessageBox.Show("Du måste markera en kategori i listan för att kunna ta bort den.");
                 return;
             }
 
-            if (!Confirm($"Är du säker på att du vill ta bort kategorin '{category.Name}'?"))
+            int podcastCount = _podcasts.Count(p => p.Category == category.Name);
+            string question = $"Är du säker på att du vill ta bort kategorin '{category.Name}'?";
+            if (podcastCount > 0)
+            {
+                question += $"{Environment.NewLine}{podcastCount} podd(ar) i kategorin blir okategoriserade.";
+            }
+
+            if (!Confirm(question))
             {
                 return;
             }
@@ -393,7 +374,7 @@ namespace PL
             try
             {
                 await _categoryController.DeleteCategoryAsync(category.Id);
-                textBox3.Clear();
+                txtCategoryName.Clear();
                 await LoadCategoriesAsync();
                 await LoadPodcastsAsync();
             }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Models;
+﻿using Models;
 using MongoDB.Driver;
 
 namespace DAL
@@ -18,9 +16,6 @@ namespace DAL
 
         public async Task<Podcast?> GetByIdAsync(string id) =>
             await Podcasts.Find(p => p.Id == id).FirstOrDefaultAsync();
-
-        public async Task<long> CountByCategoryAsync(string categoryName) =>
-            await Podcasts.CountDocumentsAsync(p => p.Category == categoryName);
 
         public Task UpdateAsync(Podcast podcast) =>
             MongoContext.RunInTransactionAsync(session =>

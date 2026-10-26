@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Models;
+﻿using Models;
 
 namespace DAL
 {
@@ -10,9 +8,8 @@ namespace DAL
         Task<List<Category>> GetAllAsync();
         Task<Category?> GetByIdAsync(string id);
 
-
         Task RenameAsync(string id, string oldName, string newName);
 
-        Task DeleteAsync(string id);
+        Task DeleteAsync(string id, string name);
     }
 }

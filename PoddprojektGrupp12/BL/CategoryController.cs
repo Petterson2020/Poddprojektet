@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using DAL;
+﻿using DAL;
 using Models;
 
 namespace BL
@@ -9,14 +6,12 @@ namespace BL
     public class CategoryController : ICategoryController
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IPodcastRepository _podcastRepository;
 
-        public CategoryController() : this(new CategoryRepository(), new PodcastRepository()) { }
+        public CategoryController() : this(new CategoryRepository()) { }
 
-        public CategoryController(ICategoryRepository categoryRepository, IPodcastRepository podcastRepository)
+        public CategoryController(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
-            _podcastRepository = podcastRepository;
         }
 
         public async Task CreateCategoryAsync(string name)
@@ -55,14 +50,7 @@ namespace BL
             Category category = await _categoryRepository.GetByIdAsync(id)
                 ?? throw new EntityNotFoundException("Kunde inte hitta kategorin som skulle tas bort.");
 
-            long count = await _podcastRepository.CountByCategoryAsync(category.Name);
-            if (count > 0)
-            {
-                throw new CategoryInUseException(
-                    $"Kategorin '{category.Name}' används av {count} podd(ar). Ändra kategori på dem eller ta bort dem först.");
-            }
-
-            await _categoryRepository.DeleteAsync(id);
+            await _categoryRepository.DeleteAsync(id, category.Name);
         }
     }
 }
