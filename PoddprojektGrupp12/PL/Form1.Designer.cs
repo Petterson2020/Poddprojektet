@@ -135,6 +135,7 @@
             btnSavePodcast.Text = "Spara";
             btnSavePodcast.UseVisualStyleBackColor = false;
             btnSavePodcast.Click += btnSavePodcast_Click;
+            cmbCategory.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbCategory.FormattingEnabled = true;
             cmbCategory.Location = new Point(177, 224);
             cmbCategory.Margin = new Padding(5);

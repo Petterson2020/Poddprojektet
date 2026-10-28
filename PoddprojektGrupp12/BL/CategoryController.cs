@@ -30,7 +30,7 @@ namespace BL
             await _categoryRepository.CreateAsync(category);
         }
 
-        public Task<List<Category>> GetAllCategoriesAsync() => _categoryRepository.GetAllAsync();
+        public async Task<List<Category>> GetAllCategoriesAsync() => await _categoryRepository.GetAllAsync();
 
         public async Task UpdateCategoryAsync(string id, string newName)
         {

@@ -35,16 +35,16 @@ namespace BL
             await _podcastRepository.CreateAsync(podcast);
         }
 
-        public Task<List<Podcast>> GetAllPodcastsAsync() => _podcastRepository.GetAllAsync();
+        public async Task<List<Podcast>> GetAllPodcastsAsync() => await _podcastRepository.GetAllAsync();
 
-        public Task<Podcast> GetPodcastPreviewAsync(string url)
+        public async Task<Podcast> GetPodcastPreviewAsync(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
                 throw new ArgumentException("URL får inte vara tom.");
             }
 
-            return _rssReader.GetPodcastAsync(url.Trim());
+            return await _rssReader.GetPodcastAsync(url.Trim());
         }
 
         public async Task DeletePodcastAsync(string id)
